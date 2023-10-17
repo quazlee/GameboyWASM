@@ -11,4 +11,7 @@ private:
 public:
     Gameboy(/* args */);
     ~Gameboy();
+
+    void initialize();
+    void mainLoop();
 };
