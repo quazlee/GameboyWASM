@@ -20,8 +20,7 @@ public:
     Cpu(/* args */);
     ~Cpu();
 
-    unsigned_two_byte fetch();
-    unsigned_four_byte decode();
+    unsigned_four_byte fetch();
     void execute();
     void interrupt();
     void tickClock();

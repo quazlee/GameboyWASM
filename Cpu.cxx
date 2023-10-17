@@ -15,9 +15,9 @@ void Cpu::setPpu(Ppu *value)
     ppu = value;
 }
 
-unsigned_two_byte Cpu::fetch()
+unsigned_four_byte Cpu::fetch()
 {
-    two_byte currentOpcode = memory->readMemory(programCounter);
+    unsigned_two_byte currentOpcode = memory->readMemory(programCounter);
     programCounter++;
     return currentOpcode;
 }
