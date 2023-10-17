@@ -24,7 +24,7 @@ public:
     void execute();
     void interrupt();
     void interruptJump(unsigned_four_byte location, int flag);
-    void tickClock();
+    void tickClock(int numTicks);
 
     void setRegisters(RegisterCollection* value);
     void setMemory(Memory* value);
