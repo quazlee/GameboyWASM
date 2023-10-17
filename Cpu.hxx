@@ -25,6 +25,6 @@ public:
     void tickClock();
 
     void setRegisters(RegisterCollection* value);
-    void setCpu(Cpu* value);
+    void setMemory(Memory* value);
     void setPpu(Ppu* value);
 };
