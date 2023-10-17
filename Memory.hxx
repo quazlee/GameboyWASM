@@ -1,5 +1,4 @@
 #include <Types.hxx>
-
 class Memory
 {
 private:
@@ -8,6 +7,6 @@ public:
     Memory(/* args */);
     ~Memory();
 
-    two_byte readMemory(four_byte address);
-    void writeMemory(four_byte address, two_byte value);
+    unsigned_two_byte readMemory(unsigned_four_byte address);
+    void writeMemory(unsigned_four_byte address, unsigned_two_byte value);
 };
