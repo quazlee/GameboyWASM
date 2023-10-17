@@ -21,7 +21,7 @@ public:
     ~Cpu();
 
     unsigned_two_byte fetch();
-    void decode();
+    unsigned_four_byte decode();
     void execute();
     void interrupt();
     void tickClock();
