@@ -20,7 +20,7 @@ public:
     Cpu(/* args */);
     ~Cpu();
 
-    void fetch();
+    two_byte fetch();
     void decode();
     void execute();
     void interrupt();
