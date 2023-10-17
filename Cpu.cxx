@@ -14,3 +14,10 @@ void Cpu::setPpu(Ppu *value)
 {
     ppu = value;
 }
+
+two_byte Cpu::fetch()
+{
+    two_byte currentOpcode = memory->readMemory(programCounter);
+    programCounter++;
+    return currentOpcode;
+}
