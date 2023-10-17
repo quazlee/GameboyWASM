@@ -23,4 +23,8 @@ public:
     void execute();
     void interrupt();
     void tickClock();
+
+    void setRegisters(RegisterCollection* value);
+    void setCpu(Cpu* value);
+    void setPpu(Ppu* value);
 };
