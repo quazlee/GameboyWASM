@@ -6,7 +6,7 @@
 class Cpu
 {
 private:
-    RegisterCollection *registers = new RegisterCollection();
+    RegisterCollection registers;
     Memory *memory = nullptr;
     Ppu *ppu = nullptr;
 
