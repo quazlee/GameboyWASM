@@ -23,6 +23,7 @@ public:
     unsigned_four_byte fetch();
     void execute();
     void interrupt();
+    void interruptJump(unsigned_four_byte location, int flag);
     void tickClock();
 
     void setRegisters(RegisterCollection* value);
