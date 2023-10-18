@@ -1,6 +1,6 @@
 #include "Cpu.hxx"
 
-void Cpu::setRegisters(RegisterCollection *value)
+void Cpu::setRegisters(RegisterCollection value)
 {
     registers = value;
 }
