@@ -4,6 +4,10 @@
 #include "Cpu.hxx"
 #include "Ppu.hxx"
 #include "Memory.hxx"
+#include <emscripten/emscripten.h>
+#include <emscripten/bind.h>
+
+using namespace emscripten;
 
 class Gameboy
 {
@@ -18,5 +22,13 @@ public:
     void initialize();
     void mainLoop();
 };
+
+EMSCRIPTEN_BINDINGS(gameboy)
+{
+    class_<Gameboy>("Gameboy")
+    .constructor()
+    .function("initialize", &Gameboy::initialize)
+    .function("mainLoop", &Gameboy::mainLoop);
+}
 
 #endif
