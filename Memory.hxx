@@ -2,6 +2,12 @@
 #define MEMORY_H
 
 #include "Types.hxx"
+
+#include <emscripten/emscripten.h>
+#include <emscripten/bind.h>
+
+using namespace emscripten;
+
 class Memory
 {
 private:
@@ -14,4 +20,12 @@ public:
     void writeMemory(unsigned_four_byte address, unsigned_two_byte value);
 };
 
+EMSCRIPTEN_BINDINGS(memory)
+{
+    class_<Memory>("Memory")
+    .constructor()
+    .function("readMemory", &Cpu::readMemory)
+    .function("writeMemory", &Cpu::writeMemory)
+    ;
+}
 #endif
