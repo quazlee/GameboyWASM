@@ -5,7 +5,15 @@
 class Memory
 {
 private:
-    /* data */
+    Cpu* = nullptr;
+
+    int mbcType;
+    int numRomBanks;
+    bool ramEnabled;
+    int bankMode;
+
+    
+
 public:
     Memory(/* args */);
     ~Memory();

@@ -8,21 +8,19 @@ MemoryBank::MemoryBank(int quantity, int size)
         {
             data[i][j] = 0;
         }
-        
     }
-    
 }
 
 MemoryBank::~MemoryBank()
 {
 }
 
-unsigned_two_byte MemoryBank::getData(int location)
+unsigned_two_byte MemoryBank::getData(int bank, int location)
 {
-    return data->at(location);
+    return data[bank][location];
 }
 
-void MemoryBank::setData(int location, unsigned_two_byte value)
+void MemoryBank::setData(int bank, int location, unsigned_two_byte value)
 {
-    data->at(location) = value;
+    data[bank][location] = value;
 }
