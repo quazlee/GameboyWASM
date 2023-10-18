@@ -22,7 +22,7 @@ private:
     MemoryBank *ram = nullptr;
 
     /** 0xC000-0xDFFF */
-    MemoryBank *vram = nullptr;
+    MemoryBank vram(1, 8192);
 
     /** 0xE000-0xFDFF
      * ECHO RAM SO IGNORE IT
@@ -35,7 +35,7 @@ private:
     /** 0xFEA0-0xFEFF
      * NOT USABLE SO IGNORE IT
      */
-    MemoryBank prohibited(1, 160);
+    MemoryBank prohibited(1, 96);
 
     /** 0xFF00-0xFF7F */
     MemoryBank io(1, 128);
