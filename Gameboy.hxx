@@ -1,5 +1,4 @@
-#ifndef GAMEBOY_H
-#define GAMEBOY_H
+#pragma once
 
 #include "Cpu.hxx"
 #include "Ppu.hxx"
@@ -30,5 +29,3 @@ EMSCRIPTEN_BINDINGS(gameboy)
     .function("initialize", &Gameboy::initialize)
     .function("mainLoop", &Gameboy::mainLoop);
 }
-
-#endif
