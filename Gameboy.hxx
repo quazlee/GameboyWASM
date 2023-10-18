@@ -1,3 +1,6 @@
+#ifndef GAMEBOY_H
+#define GAMEBOY_H
+
 #include "Cpu.hxx"
 #include "Ppu.hxx"
 #include "Memory.hxx"
@@ -15,3 +18,5 @@ public:
     void initialize();
     void mainLoop();
 };
+
+#endif

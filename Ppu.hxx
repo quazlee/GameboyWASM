@@ -1,3 +1,6 @@
+#ifndef PPU_H
+#define PPU_H
+
 class Ppu
 {
 private:
@@ -6,3 +9,4 @@ public:
     Ppu(/* args */);
     ~Ppu();
 };
+#endif

@@ -1,3 +1,6 @@
+#ifndef REGISTERCOLLECTION_H
+#define REGISTERCOLLECTION_H
+
 class RegisterCollection
 {
 private:
@@ -6,3 +9,4 @@ public:
     RegisterCollection(/* args */);
     ~RegisterCollection();
 };
+#endif

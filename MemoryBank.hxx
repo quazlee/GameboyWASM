@@ -1,3 +1,6 @@
+#ifndef MEMORYBANK_H
+#define MEMORYBANK_H
+
 #include <vector>
 #include "Types.hxx"
 
@@ -13,3 +16,4 @@ public:
     unsigned_two_byte getData(int location);
     void setData(int location, unsigned_two_byte value);
 };
+#endif

@@ -1,3 +1,6 @@
+#ifndef CPU_H
+#define CPU_H
+
 #include "RegisterCollection.hxx"
 #include "Ppu.hxx"
 #include "Memory.hxx"
@@ -29,3 +32,5 @@ public:
     void setMemory(Memory* value);
     void setPpu(Ppu* value);
 };
+
+#endif
