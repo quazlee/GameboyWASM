@@ -1,6 +1,6 @@
-#include <Cpu.hxx>
-#include <Ppu.hxx>
-#include <Memory.hxx>
+#include "Cpu.hxx"
+#include "Ppu.hxx"
+#include "Memory.hxx"
 
 class Gameboy
 {

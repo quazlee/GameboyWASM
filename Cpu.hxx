@@ -1,7 +1,7 @@
-#include <RegisterCollection.hxx>
-#include <Ppu.hxx>
-#include <Memory.hxx>
-#include <Types.hxx>
+#include "RegisterCollection.hxx"
+#include "Ppu.hxx"
+#include "Memory.hxx"
+#include "Types.hxx"
 
 class Cpu
 {
