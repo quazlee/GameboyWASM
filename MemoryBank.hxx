@@ -13,6 +13,6 @@ private:
 public:
     MemoryBank(int quantity, int size);
     ~MemoryBank();
-    unsigned_two_byte getData(int location);
-    void setData(int location, unsigned_two_byte value);
+    unsigned_two_byte getData(int bank, int location);
+    void setData(int bank, int location, unsigned_two_byte value);
 };
