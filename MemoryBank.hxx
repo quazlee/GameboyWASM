@@ -26,8 +26,8 @@ EMSCRIPTEN_BINDINGS(memorybank)
 {
     class_<MemoryBank>("MemoryBank")
     .constructor()
-    .function("getData", &Cpu::getData)
-    .function("setData", &Cpu::setData)
+    .function("getData", &MemoryBank::getData)
+    .function("setData", &MemoryBank::setData)
     ;
 }
 #endif

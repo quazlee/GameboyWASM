@@ -24,8 +24,8 @@ EMSCRIPTEN_BINDINGS(memory)
 {
     class_<Memory>("Memory")
     .constructor()
-    .function("readMemory", &Cpu::readMemory)
-    .function("writeMemory", &Cpu::writeMemory)
+    .function("readMemory", &Memory::readMemory)
+    .function("writeMemory", &Memory::writeMemory)
     ;
 }
 #endif
