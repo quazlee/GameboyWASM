@@ -1,5 +1,4 @@
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
 typedef short four_byte;
 typedef unsigned short unsigned_four_byte;
@@ -18,4 +17,3 @@ enum registerID
     A,
     F
 };
-#endif
