@@ -10,11 +10,23 @@ void Cpu::setPpu(Ppu *value)
     ppu = value;
 }
 
+Cpu::Cpu()
+{
+}
+
+Cpu::~Cpu()
+{
+}
+
 unsigned_four_byte Cpu::fetch()
 {
     unsigned_two_byte currentOpcode = memory->readMemory(programCounter);
     programCounter++;
     return currentOpcode;
+}
+
+void Cpu::execute()
+{
 }
 
 void Cpu::interrupt()
@@ -44,11 +56,16 @@ void Cpu::interrupt()
     }
 }
 
+void Cpu::tickClock(int numTicks)
+{
+}
+
 void Cpu::interruptJump(unsigned_four_byte location, int flag)
 {
-    stackPointer = registers.differenceDouble(stackPointer, 1);
+    stackPointer--;
     memory->writeMemory(stackPointer, (programCounter >> 8));
-    stackPointer = registers.differenceDouble(stackPointer, 1);
+    stackPointer--;
+
     memory->writeMemory(stackPointer, (programCounter & 0xff));
     programCounter = location;
     memory->writeMemory(0xFF0F, memory->readMemory(0xFF0F) & ~(1 << flag));
