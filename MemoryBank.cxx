@@ -1,8 +1,16 @@
 #include "MemoryBank.hxx"
 
-MemoryBank::MemoryBank()
+MemoryBank::MemoryBank(int quantity, int size)
 {
-    data = new std::vector<unsigned_two_byte>(size);
+    for (int i = 0; i < quantity; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            data[i][j] = 0;
+        }
+        
+    }
+    
 }
 
 MemoryBank::~MemoryBank()

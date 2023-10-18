@@ -7,10 +7,11 @@ class MemoryBank
 {
 private:
     /* data */
-    int size;
-    std::vector<unsigned_two_byte>* data;
+    int bankSize;
+    int numBanks;
+    std::vector<std::vector<unsigned_two_byte>> data;
 public:
-    MemoryBank(/* args */);
+    MemoryBank(int quantity, int size);
     ~MemoryBank();
     unsigned_two_byte getData(int location);
     void setData(int location, unsigned_two_byte value);
