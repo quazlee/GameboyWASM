@@ -1,13 +1,7 @@
-#ifndef MEMORYBANK_H
-#define MEMORYBANK_H
+#pragma once
 
 #include <vector>
 #include "Types.hxx"
-
-#include <emscripten/emscripten.h>
-#include <emscripten/bind.h>
-
-using namespace emscripten;
 
 class MemoryBank
 {
@@ -21,13 +15,3 @@ public:
     unsigned_two_byte getData(int location);
     void setData(int location, unsigned_two_byte value);
 };
-
-EMSCRIPTEN_BINDINGS(memorybank)
-{
-    class_<MemoryBank>("MemoryBank")
-    .constructor()
-    .function("getData", &MemoryBank::getData)
-    .function("setData", &MemoryBank::setData)
-    ;
-}
-#endif

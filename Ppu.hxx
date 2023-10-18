@@ -1,10 +1,4 @@
-#ifndef PPU_H
-#define PPU_H
-
-#include <emscripten/emscripten.h>
-#include <emscripten/bind.h>
-
-using namespace emscripten;
+#pragma once
 
 class Ppu
 {
@@ -15,10 +9,3 @@ public:
     ~Ppu();
 };
 
-EMSCRIPTEN_BINDINGS(ppu)
-{
-    class_<Ppu>("Ppu")
-    .constructor()
-    ;
-}
-#endif

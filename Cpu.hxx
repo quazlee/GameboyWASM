@@ -1,15 +1,9 @@
-#ifndef CPU_H
-#define CPU_H
+#pragma once
 
 #include "RegisterCollection.hxx"
 #include "Ppu.hxx"
 #include "Memory.hxx"
 #include "Types.hxx"
-
-#include <emscripten/emscripten.h>
-#include <emscripten/bind.h>
-
-using namespace emscripten;
 
 class Cpu
 {
@@ -37,15 +31,3 @@ public:
     void setMemory(Memory* value);
     void setPpu(Ppu* value);
 };
-
-EMSCRIPTEN_BINDINGS(cpu)
-{
-    class_<Cpu>("Cpu")
-    .constructor()
-    .function("fetch", &Cpu::fetch)
-    .function("setMemory", &Cpu::setMemory, allow_raw_pointers())
-    .function("setPpu", &Cpu::setPpu, allow_raw_pointers())
-    ;
-}
-
-#endif
