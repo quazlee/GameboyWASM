@@ -24,7 +24,7 @@ public:
     Cpu(/* args */);
     ~Cpu();
 
-    unsigned_four_byte fetch();
+    unsigned_two_byte fetch();
     void execute();
     void interrupt();
     void interruptJump(unsigned_four_byte location, int flag);

@@ -18,7 +18,7 @@ Cpu::~Cpu()
 {
 }
 
-unsigned_four_byte Cpu::fetch()
+unsigned_two_byte Cpu::fetch()
 {
     unsigned_two_byte currentOpcode = memory->readMemory(programCounter);
     programCounter++;
@@ -61,69 +61,188 @@ void Cpu::execute()
             break;
         }
         case 0x4:
+        {
+            registers.incRegister(registerID::B);
+            tickClock(4);
             break;
+        }
         case 0x5:
+        {
+            registers.decRegister(registerID::B);
+            tickClock(4);
             break;
+        }
         case 0x6:
+        {
+            registers.setRegister(registerID::B, fetch());
+            tickClock(8);
             break;
+        }
         case 0x7:
+        {
+            registers.rotateLeftCircularA();
+            tickClock(4);
             break;
+        }
         case 0x8:
+        {
+            unsigned_two_byte low = fetch();
+            unsigned_two_byte high = fetch();
+            unsigned_four_byte location = (high << 8) | low;
+            unsigned_two_byte lowStack = stackPointer & 0xFF;
+            unsigned_two_byte highStack = stackPointer >> 8;
+            memory.writeMemory(location, lowStack);
+            memory.writeMemory(location + 1, highStack);
+            tickClock(20);
             break;
+        }
         case 0x9:
+        {
+            registers.addHL(registers.getRegisterDouble(registerID::B, registerID::C));
+            tickClock(8);
             break;
+        }
         case 0xA:
+        {
+            unsigned_two_byte value = memory.readMemory(registers.getRegisterDouble(registerID::B, registerID::C));
+            registers.setRegister(registerID::A, value);
+            tickClock(8);
             break;
+        }
         case 0xB:
+        {
+            registers.decRegisterDouble(registerID::B, registerID::C);
+            tickClock(8);
             break;
+        }
         case 0xC:
+        {
+            registers.incRegister(registerID::C);
+            tickClock(4);
             break;
+        }
         case 0xD:
+        {
+            registers.decRegister(registerID::C);
+            tickClock(4);
             break;
+        }
         case 0xE:
+        {
+            registers.setRegister(registerID::C, fetch());
+            tickClock(8);
             break;
+        }
         case 0xF:
+        {
+            registers.rotateRightCircularA();
+            tickClock(4);
             break;
+        }
         }
         break;
     case 0x1:
         switch (currentOpcode & 0xF)
         {
         case 0x0:
+        { // TODO: STOP
+            tickClock(4);
             break;
+        }
         case 0x1:
+        {
+            unsigned_two_byte low = fetch();
+            unsigned_two_byte high = fetch();
+            registers.setRegisterDouble(registerID::D, registerID::E, high, low);
+            tickClock(12);
             break;
-        case 0x2:
-            break;
+        }
         case 0x3:
+        {
+            registers.incRegisterDouble(registerID::D, registerID::E);
+            tickClock(8);
             break;
+        }
         case 0x4:
+        {
+            registers.incRegister(registerID::D);
+            tickClock(4);
             break;
+        }
         case 0x5:
+        {
+            registers.decRegister(registerID::D);
+            tickClock(4);
             break;
+        }
         case 0x6:
+        {
+            registers.setRegister(registerID::D, fetch());
+            tickClock(8);
             break;
+        }
         case 0x7:
+        {
+            registers.rotateLeftA();
+            tickClock(4);
             break;
+        }
         case 0x8:
+        {
+            unsigned_two_byte jumpOffset = fetch();
+            programCounter += static_cast<two_byte>(jumpOffset);
+            tickClock(12);
             break;
+        }
         case 0x9:
+        {
+            registers.addHL(registers.getRegisterDouble(registerID::D, registerID::E));
+            tickClock(8);
             break;
+        }
         case 0xA:
+        {
+            unsigned_two_byte value = memory.readMemory(registers.getRegisterDouble(registerID::D, registerID::E));
+            registers.setRegister(registerID::A, value);
+            tickClock(8);
             break;
+        }
         case 0xB:
+        {
+            registers.decRegisterDouble(registerID::D, registerID::E);
+            tickClock(8);
             break;
+        }
         case 0xC:
+        {
+            registers.incRegister(registerID::E);
+            tickClock(4);
             break;
+        }
         case 0xD:
+        {
+            registers.decRegister(registerID::E);
+            tickClock(4);
             break;
+        }
         case 0xE:
+        {
+            registers.setRegister(registerID::E, fetch());
+            tickClock(8);
             break;
+        }
         case 0xF:
+        {
+            registers.rotateRightA();
+            tickClock(4);
             break;
+        }
         }
         break;
     case 0x2:
+        switch (low)
+        {
+        }
         break;
     case 0x3:
         break;
