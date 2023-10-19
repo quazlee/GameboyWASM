@@ -2,55 +2,61 @@
 
 #include "Types.hxx"
 #include "MemoryBank.hxx"
+#include "Cpu.hxx"
+
+class Cpu;
 
 class Memory
 {
 private:
-    Cpu * = nullptr;
+    Cpu *cpu = nullptr;
 
     int mbcType;
     int numRomBanks;
-    bool ramEnabled;
-    int bankMode;
+    int numRamBanks;
+    int currentRomBank = 1;
+    int currentRamBank = 0;
+    bool ramEnabled = false;
+    bool bankMode = false;
 
     MemoryBank *rom = nullptr;
 
     /** 0x8000-0x9FFF */
-    MemoryBank vram(1, 8192);
+    MemoryBank* vram = new MemoryBank(1, 8192);
 
     /** 0xA000-0xBFFF */
     MemoryBank *ram = nullptr;
 
     /** 0xC000-0xDFFF */
-    MemoryBank vram(1, 8192);
+    MemoryBank* wram = new MemoryBank(1, 8192);
 
     /** 0xE000-0xFDFF
      * ECHO RAM SO IGNORE IT
      */
-    MemoryBank echoram(1, 7680);
+    MemoryBank* echoram = new MemoryBank(1, 7680);
 
     /** 0xFE00-0xFE9F */
-    MemoryBank vram(1, 160);
+    MemoryBank* oam = new MemoryBank(1, 160);
 
     /** 0xFEA0-0xFEFF
      * NOT USABLE SO IGNORE IT
      */
-    MemoryBank prohibited(1, 96);
+    MemoryBank* prohibited = new MemoryBank(1, 96);
 
     /** 0xFF00-0xFF7F */
-    MemoryBank io(1, 128);
+    MemoryBank* io = new MemoryBank(1, 128);
 
     /** 0xFF80-0xFFFE */
-    MemoryBank hram(1, 127);
+    MemoryBank* hram = new MemoryBank(1, 127);
 
     /** 0xFFFF */
-    bool ie = false;
+    MemoryBank* ie = new MemoryBank(1, 1);
 
 public:
     Memory(/* args */);
     ~Memory();
 
-    void initialize();
+    void initialize(std::vector<unsigned_two_byte> romInput);
 
     unsigned_two_byte readMemory(unsigned_four_byte address);
     void writeMemory(unsigned_four_byte address, unsigned_two_byte value);

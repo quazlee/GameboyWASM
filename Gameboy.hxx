@@ -3,10 +3,10 @@
 #include "Cpu.hxx"
 #include "Ppu.hxx"
 #include "Memory.hxx"
-#include <emscripten/emscripten.h>
-#include <emscripten/bind.h>
+// #include <emscripten/emscripten.h>
+// #include <emscripten/bind.h>
 
-using namespace emscripten;
+// using namespace emscripten;
 
 class Gameboy
 {
@@ -18,14 +18,15 @@ public:
     Gameboy(/* args */);
     ~Gameboy();
 
+    void readRom();
     void initialize();
     void mainLoop();
 };
 
-EMSCRIPTEN_BINDINGS(gameboy)
-{
-    class_<Gameboy>("Gameboy")
-    .constructor()
-    .function("initialize", &Gameboy::initialize)
-    .function("mainLoop", &Gameboy::mainLoop);
-}
+// EMSCRIPTEN_BINDINGS(gameboy)
+// {
+//     class_<Gameboy>("Gameboy")
+//     .constructor()
+//     .function("initialize", &Gameboy::initialize)
+//     .function("mainLoop", &Gameboy::mainLoop);
+// }

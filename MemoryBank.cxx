@@ -2,12 +2,10 @@
 
 MemoryBank::MemoryBank(int quantity, int size)
 {
+    data = new std::vector<std::vector<unsigned_two_byte>*>(quantity);
     for (int i = 0; i < quantity; i++)
     {
-        for (int j = 0; j < size; j++)
-        {
-            data[i][j] = 0;
-        }
+        data->at(i) = new std::vector<unsigned_two_byte>(size);
     }
 }
 
@@ -17,10 +15,10 @@ MemoryBank::~MemoryBank()
 
 unsigned_two_byte MemoryBank::getData(int bank, int location)
 {
-    return data[bank][location];
+    return data->at(bank)->at(location);
 }
 
 void MemoryBank::setData(int bank, int location, unsigned_two_byte value)
 {
-    data[bank][location] = value;
+    data->at(bank)->at(location) = value;
 }

@@ -9,7 +9,7 @@ private:
     /* data */
     int bankSize;
     int numBanks;
-    std::vector<std::vector<unsigned_two_byte>> data;
+    std::vector<std::vector<unsigned_two_byte>*>* data;
 public:
     MemoryBank(int quantity, int size);
     ~MemoryBank();

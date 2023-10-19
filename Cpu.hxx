@@ -5,6 +5,8 @@
 #include "Memory.hxx"
 #include "Types.hxx"
 
+class Memory;
+
 class Cpu
 {
 private:

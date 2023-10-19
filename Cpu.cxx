@@ -27,6 +27,131 @@ unsigned_four_byte Cpu::fetch()
 
 void Cpu::execute()
 {
+    unsigned_two_byte currentOpcode = fetch();
+    switch (currentOpcode >> 4)
+    {
+    case 0x0:
+        switch (currentOpcode & 0xF)
+        {
+        case 0x0:
+        {
+            tickClock(4);
+            break;
+        }
+        case 0x1:
+        {
+            unsigned_two_byte low = fetch();
+            unsigned_two_byte high = fetch();
+            registers.setRegisterDouble(registerID::B, registerID::C, high, low);
+            tickClock(12);
+            break;
+        }
+        case 0x2:
+        {
+            int location = registers.getRegisterDouble(registerID::B, registerID::C);
+            unsigned_two_byte value = registers.getRegister(registerID::A);
+            memory->writeMemory(location, value);
+            tickClock(8);
+            break;
+        }
+        case 0x3:
+        {
+            registers.incRegisterDouble(registerID::B, registerID::C);
+            tickClock(8);
+            break;
+        }
+        case 0x4:
+            break;
+        case 0x5:
+            break;
+        case 0x6:
+            break;
+        case 0x7:
+            break;
+        case 0x8:
+            break;
+        case 0x9:
+            break;
+        case 0xA:
+            break;
+        case 0xB:
+            break;
+        case 0xC:
+            break;
+        case 0xD:
+            break;
+        case 0xE:
+            break;
+        case 0xF:
+            break;
+        }
+        break;
+    case 0x1:
+        switch (currentOpcode & 0xF)
+        {
+        case 0x0:
+            break;
+        case 0x1:
+            break;
+        case 0x2:
+            break;
+        case 0x3:
+            break;
+        case 0x4:
+            break;
+        case 0x5:
+            break;
+        case 0x6:
+            break;
+        case 0x7:
+            break;
+        case 0x8:
+            break;
+        case 0x9:
+            break;
+        case 0xA:
+            break;
+        case 0xB:
+            break;
+        case 0xC:
+            break;
+        case 0xD:
+            break;
+        case 0xE:
+            break;
+        case 0xF:
+            break;
+        }
+        break;
+    case 0x2:
+        break;
+    case 0x3:
+        break;
+    case 0x4:
+        break;
+    case 0x5:
+        break;
+    case 0x6:
+        break;
+    case 0x7:
+        break;
+    case 0x8:
+        break;
+    case 0x9:
+        break;
+    case 0xA:
+        break;
+    case 0xB:
+        break;
+    case 0xC:
+        break;
+    case 0xD:
+        break;
+    case 0xE:
+        break;
+    case 0xF:
+        break;
+    }
 }
 
 void Cpu::interrupt()
