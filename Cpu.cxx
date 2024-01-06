@@ -91,8 +91,8 @@ void Cpu::execute()
             unsigned_four_byte location = (high << 8) | low;
             unsigned_two_byte lowStack = stackPointer & 0xFF;
             unsigned_two_byte highStack = stackPointer >> 8;
-            memory.writeMemory(location, lowStack);
-            memory.writeMemory(location + 1, highStack);
+            memory->writeMemory(location, lowStack);
+            memory->writeMemory(location + 1, highStack);
             tickClock(20);
             break;
         }
@@ -104,7 +104,7 @@ void Cpu::execute()
         }
         case 0xA:
         {
-            unsigned_two_byte value = memory.readMemory(registers.getRegisterDouble(registerID::B, registerID::C));
+            unsigned_two_byte value = memory->readMemory(registers.getRegisterDouble(registerID::B, registerID::C));
             registers.setRegister(registerID::A, value);
             tickClock(8);
             break;
@@ -202,7 +202,7 @@ void Cpu::execute()
         }
         case 0xA:
         {
-            unsigned_two_byte value = memory.readMemory(registers.getRegisterDouble(registerID::D, registerID::E));
+            unsigned_two_byte value = memory->readMemory(registers.getRegisterDouble(registerID::D, registerID::E));
             registers.setRegister(registerID::A, value);
             tickClock(8);
             break;
@@ -240,154 +240,154 @@ void Cpu::execute()
         }
         break;
     case 0x2:
-        switch (low)
-        {
-        case 0x0:
-        {
-            jumpRelativeConditional(!registers.getFlag(7));
-            break;
-        }
-        case 0x1:
-        {
-            unsigned_two_byte low = fetch();
-            unsigned_two_byte high = fetch();
-            registers.setRegisterDouble(registerID::H, registerID::L, high, low);
-            tickClock(12);
-            break;
-        }
-        case 0x2:
-        {
-            unsigned_four_byte tempHLLocation = registers.getRegisterDouble(registerID::H, registerID::L);
-            registers.setRegister(registerID::HL, memory.readMemory(tempHLLocation));
-            unsigned_two_byte value = registers.getRegister(registerID::A);
-            registers.setRegister(registerID::HL, value);
-            memory.writeMemory(tempHLLocation, registers.getRegister(registerID::HL));
-            registers.incRegisterDouble(registerID::H, registerID::L);
-            tickClock(8);
-            break;
-        }
-        case 0x3:
-        {
-            registers.incRegisterDouble(registerID::H, registerID::L);
-            tickClock(8);
-            break;
-        }
-        case 0x4:
-        {
-            registers.incRegister(registerID::H);
-            tickClock(4);
-            break;
-        }
-        case 0x5:
-        {
-            registers.decRegister(registerID::H);
-            tickClock(4);
-            break;
-        }
-        case 0x6:
-        {
-            registers.setRegister(registerID::H, fetch());
-            tickClock(8);
-            break;
-        }
-        case 0x7:
-        {
-            bool carry = registers.getFlag(4);
-            bool halfcarry = registers.getFlag(5);
-            bool negative = registers.getFlag(6);
+        // switch (currentOpcode & 0xF)
+        // {
+        // case 0x0:
+        // {
+        //     jumpRelativeConditional(!registers.getFlag(7));
+        //     break;
+        // }
+        // case 0x1:
+        // {
+        //     unsigned_two_byte low = fetch();
+        //     unsigned_two_byte high = fetch();
+        //     registers.setRegisterDouble(registerID::H, registerID::L, high, low);
+        //     tickClock(12);
+        //     break;
+        // }
+        // case 0x2:
+        // {
+        //     unsigned_four_byte tempHLLocation = registers.getRegisterDouble(registerID::H, registerID::L);
+        //     registers.setRegister(registerID::HL, memory->readMemory(tempHLLocation));
+        //     unsigned_two_byte value = registers.getRegister(registerID::A);
+        //     registers.setRegister(registerID::HL, value);
+        //     memory->writeMemory(tempHLLocation, registers.getRegister(registerID::HL));
+        //     registers.incRegisterDouble(registerID::H, registerID::L);
+        //     tickClock(8);
+        //     break;
+        // }
+        // case 0x3:
+        // {
+        //     registers.incRegisterDouble(registerID::H, registerID::L);
+        //     tickClock(8);
+        //     break;
+        // }
+        // case 0x4:
+        // {
+        //     registers.incRegister(registerID::H);
+        //     tickClock(4);
+        //     break;
+        // }
+        // case 0x5:
+        // {
+        //     registers.decRegister(registerID::H);
+        //     tickClock(4);
+        //     break;
+        // }
+        // case 0x6:
+        // {
+        //     registers.setRegister(registerID::H, fetch());
+        //     tickClock(8);
+        //     break;
+        // }
+        // case 0x7:
+        // {
+        //     bool carry = registers.getFlag(4);
+        //     bool halfcarry = registers.getFlag(5);
+        //     bool negative = registers.getFlag(6);
 
-            unsigned_two_byte currentValue = registers.getRegister(registerID::A);
-            registers.clearFlag(4);
-            if (!negative)
-            {
+        //     unsigned_two_byte currentValue = registers.getRegister(registerID::A);
+        //     registers.clearFlag(4);
+        //     if (!negative)
+        //     {
 
-                unsigned_two_byte low = currentValue & 0xF;
+        //         unsigned_two_byte low = currentValue & 0xF;
 
-                if (low > 0x9 || halfcarry)
-                {
-                    currentValue += 0x06;
-                }
+        //         if (low > 0x9 || halfcarry)
+        //         {
+        //             currentValue += 0x06;
+        //         }
 
-                unsigned_two_byte high = currentValue >> 4;
+        //         unsigned_two_byte high = currentValue >> 4;
 
-                if (high > 0x9 || carry)
-                {
-                    currentValue += 0x60;
-                    registers.setFlag(4);
-                }
-            }
-            else
-            {
-                if (carry)
-                {
-                    currentValue -= 0x60;
-                    registers.setFlag(4);
-                }
+        //         if (high > 0x9 || carry)
+        //         {
+        //             currentValue += 0x60;
+        //             registers.setFlag(4);
+        //         }
+        //     }
+        //     else
+        //     {
+        //         if (carry)
+        //         {
+        //             currentValue -= 0x60;
+        //             registers.setFlag(4);
+        //         }
 
-                if (halfcarry)
-                {
-                    currentValue -= 0x60;
-                }
-            }
-            registers.setRegister(registerID::A, currentValue);
+        //         if (halfcarry)
+        //         {
+        //             currentValue -= 0x60;
+        //         }
+        //     }
+        //     registers.setRegister(registerID::A, currentValue);
 
-            registers.clearFlag(5);
-            registers.assignZero(registers.getRegister(registerID::A));
-            break;
-        }
-        case 0x8:
-        {
-            jumpRelativeConditional(registers.getFlag(7));
-            break;
-        }
-        case 0x9:
-        {
-            registers.addHL(registers.getRegisterDouble(registerID::H, registerID::L));
-            tickClock(8);
-            break;
-        }
-        case 0xA:
-        {
-            unsigned_four_byte tempHLLocation = registers.getRegisterDouble(registerID::H, registerID::L);
-            registers.setRegister(registerID::HL, memory.readMemory(tempHLLocation));
-            unsigned_two_byte value = registers.getRegister(registerID::HL);
-            registers.incRegisterDouble(registerID::H, registerID::L);
-            registers.setRegister(registerID::A, value);
-            tickClock(8);
-            break;
-        }
-        case 0xB:
-        {
-            registers.decRegisterDouble(registerID::H, registerID::L);
-            tickClock(8);
-            break;
-        }
-        case 0xC:
-        {
-            registers.incRegister(registerID::L);
-            tickClock(4);
-            break;
-        }
-        case 0xD:
-        {
-            registers.decRegister(registerID::L);
-            tickClock(4);
-            break;
-        }
-        case 0xE:
-        {
-            registers.setRegister(registerID::L, fetch());
-            tickClock(8);
-            break;
-        }
-        case 0xF:
-        {
-            registers.setRegister(registerID::A, (registers.getRegister(registerID::A) ^ 0xFF));
-            registers.setFlag(6);
-            registers.setFlag(5);
-            break;
-        }
-        }
+        //     registers.clearFlag(5);
+        //     registers.assignZero(registers.getRegister(registerID::A));
+        //     break;
+        // }
+        // case 0x8:
+        // {
+        //     jumpRelativeConditional(registers.getFlag(7));
+        //     break;
+        // }
+        // case 0x9:
+        // {
+        //     registers.addHL(registers.getRegisterDouble(registerID::H, registerID::L));
+        //     tickClock(8);
+        //     break;
+        // }
+        // case 0xA:
+        // {
+        //     unsigned_four_byte tempHLLocation = registers.getRegisterDouble(registerID::H, registerID::L);
+        //     registers.setRegister(registerID::HL, memory->readMemory(tempHLLocation));
+        //     unsigned_two_byte value = registers.getRegister(registerID::HL);
+        //     registers.incRegisterDouble(registerID::H, registerID::L);
+        //     registers.setRegister(registerID::A, value);
+        //     tickClock(8);
+        //     break;
+        // }
+        // case 0xB:
+        // {
+        //     registers.decRegisterDouble(registerID::H, registerID::L);
+        //     tickClock(8);
+        //     break;
+        // }
+        // case 0xC:
+        // {
+        //     registers.incRegister(registerID::L);
+        //     tickClock(4);
+        //     break;
+        // }
+        // case 0xD:
+        // {
+        //     registers.decRegister(registerID::L);
+        //     tickClock(4);
+        //     break;
+        // }
+        // case 0xE:
+        // {
+        //     registers.setRegister(registerID::L, fetch());
+        //     tickClock(8);
+        //     break;
+        // }
+        // case 0xF:
+        // {
+        //     registers.setRegister(registerID::A, (registers.getRegister(registerID::A) ^ 0xFF));
+        //     registers.setFlag(6);
+        //     registers.setFlag(5);
+        //     break;
+        // }
+        // }
         break;
     case 0x3:
         break;
