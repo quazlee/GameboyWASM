@@ -58,9 +58,9 @@ public:
 
     void assignHalfcarryAdd(unsigned_two_byte value1, unsigned_two_byte value2);
     void assignHalfcarryAddDouble(unsigned_four_byte value1, unsigned_four_byte value2);
-    void assignHalfcarryAdc(unsigned_four_byte value1, unsigned_four_byte value2, unsigned_four_byte value3);
+    void assignHalfcarryAdc(unsigned_two_byte value1, unsigned_two_byte value2, unsigned_two_byte value3);
 
     void assignHalfcarrySub(unsigned_two_byte value1, unsigned_two_byte value2);
     void assignHalfcarrySubDouble(unsigned_four_byte value1, unsigned_four_byte value2);
-    void assignHalfcarrySbc(unsigned_four_byte value1, unsigned_four_byte value2, unsigned_four_byte value3);
+    void assignHalfcarrySbc(unsigned_two_byte value1, unsigned_two_byte value2, unsigned_two_byte value3);
 };

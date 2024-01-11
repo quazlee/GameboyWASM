@@ -32,4 +32,6 @@ public:
     
     void setMemory(Memory* value);
     void setPpu(Ppu* value);
+
+    void jumpRelativeConditional(bool condition);
 };

@@ -1,8 +1,8 @@
 #pragma once
 
-typedef short four_byte;
+typedef short signed_four_byte;
 typedef unsigned short unsigned_four_byte;
-typedef char two_byte;
+typedef char signed_two_byte;
 typedef unsigned char unsigned_two_byte;
 
 // class unsigned_four_byte

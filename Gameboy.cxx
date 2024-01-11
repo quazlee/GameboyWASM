@@ -25,4 +25,13 @@ void Gameboy::initialize()
 
 void Gameboy::mainLoop()
 {
+    while (!ppu->getIsFrameReady())
+    {
+        // this.cpu.interrupt();
+
+        // this.debug.logger();
+
+        cpu->execute();
+        // this.controls.updateInputState();
+    }
 }

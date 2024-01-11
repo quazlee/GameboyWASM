@@ -138,19 +138,19 @@ void RegisterCollection::cpA(unsigned_two_byte targetValue)
 
 void RegisterCollection::addHL(unsigned_two_byte value)
 {
-    unsigned_four_byte oldValue = getRegisterDouble(registerID.H, registerID.L);
+    unsigned_four_byte oldValue = getRegisterDouble(registerID::H, registerID::L);
     unsigned_four_byte sum = oldValue + value;
-    setRegisterDouble(registerID.H, registerID.L, sum >> 8, sum & 0xFF);
+    setRegisterDouble(registerID::H, registerID::L, sum >> 8, sum & 0xFF);
     clearFlag(6);
     assignHalfcarryAddDouble(oldValue, value);
     assignCarryDouble(oldValue, value);
 }
 
-void RegisterCollection::incRegister(int register)
+void RegisterCollection::incRegister(int registerIn)
 {
-    unsigned_two_byte oldValue = data[register];
+    unsigned_two_byte oldValue = data[registerIn];
     unsigned_two_byte newValue = oldValue + 1;
-    data[register] = newValue;
+    data[registerIn] = newValue;
     assignZero(newValue);
     clearFlag(6);
     assignHalfcarryAdd(oldValue, 1);
@@ -168,9 +168,9 @@ void RegisterCollection::incRegisterDouble(int registerHigh, int registerLow)
 
 void RegisterCollection::decRegister(int registerIn)
 {
-    unsigned_two_byte oldValue = data[register];
-    unsigned_two_byte newValue = data[register] - 1;
-    data[register] = newValue;
+    unsigned_two_byte oldValue = data[registerIn];
+    unsigned_two_byte newValue = data[registerIn] - 1;
+    data[registerIn] = newValue;
     assignZero(newValue);
     setFlag(6);
     assignHalfcarrySub(oldValue, 1);
@@ -189,11 +189,11 @@ void RegisterCollection::decRegisterDouble(int registerHigh, int registerLow)
 void RegisterCollection::rotateRightA()
 {
     int carry = getFlag(4);
-    if (data[registerID.A] & 1)
+    if (data[registerID::A] & 1)
         setFlag(4);
     else
         clearFlag(4);
-    data[registerID.A] = ((data[registerID.A] >> 1 | (carry << 7)) & 0xFF);
+    data[registerID::A] = ((data[registerID::A] >> 1 | (carry << 7)) & 0xFF);
     clearFlag(7);
     clearFlag(6);
     clearFlag(5);
@@ -202,11 +202,11 @@ void RegisterCollection::rotateRightA()
 void RegisterCollection::rotateLeftA()
 {
     int carry = getFlag(4);
-    if (data[registerID.A] & 0x80)
+    if (data[registerID::A] & 0x80)
         setFlag(4);
     else
         clearFlag(4);
-    data[registerID.A] = ((data[registerID.A] << 1 | (carry)) & 0xFF);
+    data[registerID::A] = ((data[registerID::A] << 1 | (carry)) & 0xFF);
     clearFlag(7);
     clearFlag(6);
     clearFlag(5);
@@ -214,20 +214,20 @@ void RegisterCollection::rotateLeftA()
 
 void RegisterCollection::rotateLeftCircularA()
 {
-    data[registerID.A] = (((data[registerID.A] << 1) | (data[registerID.A] >> 7)) & 0xFF);
+    data[registerID::A] = (((data[registerID::A] << 1) | (data[registerID::A] >> 7)) & 0xFF);
     clearFlag(7);
     clearFlag(6);
     clearFlag(5);
-    assignCarryShiftLeft(data[registerID.A]);
+    assignCarryShiftLeft(data[registerID::A]);
 }
 
 void RegisterCollection::rotateRightCircularA()
 {
-    data[registerID.A] = (((data[registerID.A] >> 1) | (data[registerID.A] << 7)) & 0xFF);
+    data[registerID::A] = (((data[registerID::A] >> 1) | (data[registerID::A] << 7)) & 0xFF);
     clearFlag(7);
     clearFlag(6);
     clearFlag(5);
-    assignCarryShiftRight(data[registerID.A]);
+    assignCarryShiftRight(data[registerID::A]);
 }
 
 void RegisterCollection::assignZero(int value)
@@ -283,7 +283,100 @@ void RegisterCollection::assignCarryAdc(unsigned_two_byte value1, unsigned_two_b
         flag |= 1;
     }
     if (flag)
-        this.setFlag(4);
+        setFlag(4);
     else
-        this.clearFlag(4);
+        clearFlag(4);
+}
+
+void RegisterCollection::assignCarrySbc(unsigned_two_byte value1, unsigned_two_byte value2, unsigned_two_byte value3)
+{
+    int flag = 0;
+    if ((value1 - value2) > value1)
+    {
+        flag |= 1;
+    }
+    unsigned_two_byte temp = (value1 - value2);
+    if ((temp - value3) > temp)
+    {
+        flag |= 1;
+    }
+    if (flag)
+        setFlag(4);
+    else
+        clearFlag(4);
+}
+
+void RegisterCollection::assignCarrySub(unsigned_two_byte value1, unsigned_two_byte value2)
+{
+    if ((value1 - value2) > value1)
+        setFlag(4);
+    else
+        clearFlag(4);
+}
+
+void RegisterCollection::assignHalfcarryAdd(unsigned_two_byte value1, unsigned_two_byte value2)
+{
+    if ((((value1 & 0xf) + (value2 & 0xf)) & 0x10) == 0x10)
+        setFlag(5);
+    else
+        clearFlag(5);
+}
+
+void RegisterCollection::assignHalfcarryAddDouble(unsigned_four_byte value1, unsigned_four_byte value2)
+{
+    if ((((value1 & 0xfff) + (value2 & 0xfff)) & 0x1000) == 0x1000)
+        setFlag(5);
+    else
+        clearFlag(5);
+}
+
+void RegisterCollection::assignHalfcarryAdc(unsigned_two_byte value1, unsigned_two_byte value2, unsigned_two_byte value3)
+{
+    int flag = 0;
+    if ((((value1 & 0xf) + (value2 & 0xf)) & 0x10) == 0x10)
+    {
+        flag |= 1;
+    }
+    unsigned_two_byte temp = value1 + value2;
+    if ((((temp & 0xf) + (value3 & 0xf)) & 0x10) == 0x10)
+    {
+        flag |= 1;
+    }
+    if (flag)
+        setFlag(5);
+    else
+        clearFlag(5);
+}
+
+void RegisterCollection::assignHalfcarrySub(unsigned_two_byte value1, unsigned_two_byte value2)
+{
+    if ((((value1 & 0xf) - (value2 & 0xf)) & 0x10) == 0x10)
+        setFlag(5);
+    else
+        clearFlag(5);
+}
+void RegisterCollection::assignHalfcarrySubDouble(unsigned_four_byte value1, unsigned_four_byte value2)
+{
+    if ((((value1 & 0xfff) - (value2 & 0xfff)) & 0x1000) == 0x1000)
+        setFlag(5);
+    else
+        clearFlag(5);
+}
+
+void RegisterCollection::assignHalfcarrySbc(unsigned_two_byte value1,  unsigned_two_byte value2, unsigned_two_byte value3)
+{
+    int flag = 0;
+    if ((((value1 & 0xf) - (value2 & 0xf)) & 0x10) == 0x10)
+    {
+        flag |= 1;
+    }
+    unsigned_two_byte temp = value1 - value2;
+    if ((((temp & 0xf) - (value3 & 0xf)) & 0x10) == 0x10)
+    {
+        flag |= 1;
+    }
+    if (flag)
+        setFlag(5);
+    else
+        clearFlag(5);
 }
