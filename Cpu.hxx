@@ -33,5 +33,21 @@ public:
     void setMemory(Memory* value);
     void setPpu(Ppu* value);
 
+    void jumpConditional(bool condition);
     void jumpRelativeConditional(bool condition);
+
+    void returnConditional(bool condition);
+    void callConditional(bool condition);
+
+    void pop(int register1, int register2);
+    void push(int register1, int register2);
+
+    void ldXY(int registerX, int registerY);
+
+    void rst(unsigned_four_byte location);
+
+    void bit(int bit, int target);
+    void res(int bit, int target);
+    void set(int bit, int target);
+
 };

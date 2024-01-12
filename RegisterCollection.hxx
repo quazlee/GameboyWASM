@@ -39,14 +39,26 @@ public:
 
     void decRegister(int registerIn);
     void decRegisterDouble(int registerHigh, int registerLow);
-    
+
     void rotateRightA();
     void rotateLeftA();
     void rotateLeftCircularA();
     void rotateRightCircularA();
 
+    void rotateRight(int target);
+    void rotateLeft(int target);
+    void rotateRightCircular(int target);
+    void rotateLeftCircular(int target);
+
+    void SRA(int target);
+    void SLA(int target);
+
+    void SRL(int target);
+
+    void swap(int target);
+
     void assignZero(int value);
-    
+
     void assignCarryShiftLeft(unsigned_two_byte value);
     void assignCarryShiftRight(unsigned_two_byte value);
 
