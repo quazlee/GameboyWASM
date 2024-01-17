@@ -230,6 +230,126 @@ void RegisterCollection::rotateRightCircularA()
     assignCarryShiftRight(data[registerID::A]);
 }
 
+void RegisterCollection::rotateRight(int target)
+{
+    unsigned_two_byte registerValue = data[target];
+    int carry = getFlag(4);
+    if (registerValue & 1)
+        setFlag(4);
+    else
+        clearFlag(4);
+    registerValue = ((registerValue >> 1 | (carry << 7)) & 0xFF);
+    data[target] = registerValue;
+    assignZero(registerValue);
+    clearFlag(6);
+    clearFlag(5);
+}
+
+void RegisterCollection::rotateLeft(int target)
+{
+    unsigned_two_byte registerValue = data[target];
+    int carry = getFlag(4);
+    if (registerValue & 0x80)
+        setFlag(4);
+    else
+        clearFlag(4);
+    registerValue = ((registerValue << 1 | (carry)) & 0xFF);
+    data[target] = registerValue;
+    assignZero(registerValue);
+    clearFlag(6);
+    clearFlag(5);
+}
+
+void RegisterCollection::rotateRightCircular(int target)
+{
+    unsigned_two_byte registerValue = data[target];
+    registerValue = (((registerValue >> 1) | (registerValue << 7)) & 0xFF);
+    data[target] = registerValue;
+    assignZero(registerValue);
+    clearFlag(6);
+    clearFlag(5);
+    assignCarryShiftRight(registerValue);
+}
+
+void RegisterCollection::rotateLeftCircular(int target)
+{
+    unsigned_two_byte registerValue = data[target];
+    registerValue = (((registerValue << 1) | (registerValue >> 7)) & 0xFF);
+    data[target] = registerValue;
+    assignZero(registerValue);
+    clearFlag(6);
+    clearFlag(5);
+    assignCarryShiftLeft(registerValue);
+}
+void RegisterCollection::SLA(int target)
+{
+    unsigned_two_byte registerValue = getRegister(target);
+    if (registerValue & 0x80)
+    {
+        setFlag(4);
+    }
+    else
+    {
+        clearFlag(4);
+    }
+    registerValue = (registerValue << 1) & 0xFF;
+    data[target] = registerValue;
+    assignZero(registerValue);
+    clearFlag(6);
+    clearFlag(5);
+}
+
+void RegisterCollection::SRA(int target)
+{
+    unsigned_two_byte registerValue = data[target];
+    if (registerValue & 0x01)
+    {
+        setFlag(4);
+    }
+    else
+    {
+        clearFlag(4);
+    }
+    int bitSeven = (registerValue & 0x80);
+    registerValue = registerValue >> 1;
+    registerValue |= bitSeven;
+    data[target] = registerValue;
+    assignZero(registerValue);
+    clearFlag(6);
+    clearFlag(5);
+}
+
+void RegisterCollection::SRL(int target)
+{
+    unsigned_two_byte registerValue = data[target];
+    if ((registerValue & 0x01) == 0x01)
+    {
+        setFlag(4);
+    }
+    else
+    {
+        clearFlag(4);
+    }
+    registerValue = registerValue >> 1;
+    assignZero(registerValue);
+    clearFlag(6);
+    clearFlag(5);
+    setRegister(target, registerValue);
+}
+
+void RegisterCollection::swap(int target)
+{
+    unsigned_two_byte registerValue = data[target];
+    unsigned_two_byte high = registerValue >> 4;
+    unsigned_two_byte low = registerValue & 0xF;
+    registerValue = (low << 4) | high;
+    assignZero(registerValue);
+    clearFlag(6);
+    clearFlag(5);
+    clearFlag(4);
+    setRegister(target, registerValue);
+}
+
 void RegisterCollection::assignZero(int value)
 {
     if (value == 0)
@@ -363,7 +483,7 @@ void RegisterCollection::assignHalfcarrySubDouble(unsigned_four_byte value1, uns
         clearFlag(5);
 }
 
-void RegisterCollection::assignHalfcarrySbc(unsigned_two_byte value1,  unsigned_two_byte value2, unsigned_two_byte value3)
+void RegisterCollection::assignHalfcarrySbc(unsigned_two_byte value1, unsigned_two_byte value2, unsigned_two_byte value3)
 {
     int flag = 0;
     if ((((value1 & 0xf) - (value2 & 0xf)) & 0x10) == 0x10)

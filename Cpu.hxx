@@ -28,7 +28,7 @@ public:
     void execute();
     void interrupt();
     void interruptJump(unsigned_four_byte location, int flag);
-    void tickClock(int numTicks);
+    void tickClock(int cycles);
     
     void setMemory(Memory* value);
     void setPpu(Ppu* value);

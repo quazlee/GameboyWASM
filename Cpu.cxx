@@ -1553,8 +1553,60 @@ void Cpu::interrupt()
     }
 }
 
-void Cpu::tickClock(int numTicks)
+void Cpu::tickClock(int cycles)
 {
+    const unsigned_four_byte ioMemoryStart = 0xFF00;
+    for (int i = 0; i < cycles; i++)
+    {
+        if (i % 2 == 1)
+        {
+            ppu->cycle();
+        }
+
+        // DIV Timer
+        sysClock++;
+        unsigned_four_byte upperSysClock = sysClock >> 8;
+        if (memory->readMemory(ioMemoryStart + 0x4) != upperSysClock)
+        {
+            memory->writeMemory(ioMemoryStart + 0x4, upperSysClock);
+
+            // TIMA Timer
+            int bit = 0;
+            switch (memory->readMemory(ioMemoryStart + 0x7) & 0x3)
+            { // determines the bit to check against in DIV
+            case 0:
+                bit = 9;
+                break;
+            case 1:
+                bit = 3;
+                break;
+            case 2:
+                bit = 5;
+                break;
+            case 3:
+                bit = 7;
+                break;
+            }
+            unsigned_two_byte timerEnable = (memory->readMemory(ioMemoryStart + 0x7) & 0x4) >> 2;
+            unsigned_four_byte andResultPrevious = (((sysClock - 1) >> bit) & 1) & timerEnable;
+            unsigned_four_byte andResult = ((sysClock >> bit) & 1) & timerEnable;
+            unsigned_two_byte TIMA = 0;
+            if (andResultPrevious == 1 && andResult == 0)
+            {
+                TIMA = memory->readMemory(ioMemoryStart + 0x5);
+                TIMA++;
+                if (TIMA > 0xFF)
+                { // if TIMA overflows past 0xFF, request TIMA Interrupt and reset value to TIMA Modulo (0xFF07)
+                    memory->writeMemory(ioMemoryStart + 0x5, memory->readMemory(ioMemoryStart + 0x6));
+                    memory->writeMemory(ioMemoryStart + 0xF, memory->readMemory(ioMemoryStart + 0xF) | (1 << 2)); // Request Interrupt
+                }
+                else
+                {
+                    memory->writeMemory(ioMemoryStart + 0x5, TIMA);
+                }
+            }
+        }
+    }
 }
 
 void Cpu::interruptJump(unsigned_four_byte location, int flag)
