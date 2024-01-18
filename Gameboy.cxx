@@ -1,6 +1,8 @@
 #include "Gameboy.hxx"
 #include <fstream>
+#include <iostream>
 #include <vector>
+#include <emscripten/val.h>
 
 Gameboy::Gameboy()
 {
@@ -10,11 +12,10 @@ Gameboy::~Gameboy()
 {
 }
 
-void Gameboy::readRom()
+void Gameboy::readRom(uintptr_t arrayBuffer, int size)
 {
-    std::ifstream stream("./Tetris.gb", std::ios::in | std::ios::binary);
-    std::vector<unsigned_two_byte> contents((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
-    memory->initialize(contents);
+    auto romContents = reinterpret_cast<unsigned_two_byte *>(arrayBuffer);
+    memory->initialize(romContents, size);
 }
 
 void Gameboy::initialize()

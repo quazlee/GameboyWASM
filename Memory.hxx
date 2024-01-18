@@ -56,7 +56,7 @@ public:
     Memory(/* args */);
     ~Memory();
 
-    void initialize(std::vector<unsigned_two_byte> romInput);
+    void initialize(unsigned_two_byte * romInput, int romLength);
 
     unsigned_two_byte readMemory(unsigned_four_byte address);
     void writeMemory(unsigned_four_byte address, unsigned_two_byte value);

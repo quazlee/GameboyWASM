@@ -9,7 +9,7 @@ Memory::~Memory()
 {
 }
 
-void Memory::initialize(std::vector<unsigned_two_byte> romInput)
+void Memory::initialize(unsigned_two_byte * romInput, int romLength)
 {
     mbcType = romInput[0x147];
     int romSize = romInput[0x148];
@@ -44,7 +44,7 @@ void Memory::initialize(std::vector<unsigned_two_byte> romInput)
         rom->setData(0, romArrayIndex, romInput[romArrayIndex]);
         romArrayIndex++;
     }
-    while (romArrayIndex < romInput.size() - 1)
+    while (romArrayIndex < romSize - 1)
     {
         if (currentBankIndex == 16384)
         {

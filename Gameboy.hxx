@@ -18,7 +18,7 @@ public:
     Gameboy();
     ~Gameboy();
 
-    void readRom();
+    void readRom(uintptr_t arrayBuffer, int size);
     void initialize();
     void mainLoop();
 };

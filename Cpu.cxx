@@ -1,5 +1,6 @@
 #include "Cpu.hxx"
 
+
 void Cpu::setMemory(Memory *value)
 {
     memory = value;

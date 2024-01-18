@@ -1,12 +1,7 @@
 <!doctype html>
 <html>
-  <script>
-    var Module = {
-      onRuntimeInitialized: function() {
-        var test = new Module.Gameboy();
-        test.readRom();
-      }
-    };
-  </script>
-  <script src="Gameboy.js"></script>
+<input type="file" id="romInput" accept=".gb" autocomplete="off">F
+<script src="Gameboy.js"></script>
+<script type="module" src="index.js"></script>
+
 </html>
