@@ -1,5 +1,6 @@
 #include "Memory.hxx"
 #include <cmath>
+#include <iostream>
 
 Memory::Memory()
 {
@@ -41,6 +42,7 @@ void Memory::initialize(unsigned_two_byte * romInput, int romLength)
     int currentBank = 0;
     while (romArrayIndex < 16384)
     {
+        std::cout << static_cast<int>(romInput[romArrayIndex]) << std::endl;
         rom->setData(0, romArrayIndex, romInput[romArrayIndex]);
         romArrayIndex++;
     }

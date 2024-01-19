@@ -38,6 +38,10 @@ void Ppu::cycle()
     }
 }
 
+void Ppu::modeZero()
+{
+}
+
 void Ppu::modeOne()
 {
 }
@@ -47,10 +51,6 @@ void Ppu::modeTwo()
 }
 
 void Ppu::modeThree()
-{
-}
-
-void Ppu::modeFour()
 {
 }
 

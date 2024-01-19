@@ -7,8 +7,8 @@ private:
     bool isFrameReady = false;
     int mode;
 
-    int tileMapOne = [65536];
-    int tileMapTwo = [65536];
+    int tileMapOne[65536];
+    int tileMapTwo[65536];
 
 public:
     Ppu(/* args */);
@@ -20,11 +20,11 @@ public:
     // General function that drives the ppu. One pass of each mode lasts two clock cycles.
     void cycle();
 
+    void modeZero();
     void modeOne();
     void modeTwo();
     void modeThree();
-    void modeFour();
 
-    int getTileMapIndex(int *tilemap,int x, int y);
+    int getTileMapIndex(int *tilemap, int x, int y);
     void setTileMapIndex(int *tilemap, int x, int y, int value);
 };
