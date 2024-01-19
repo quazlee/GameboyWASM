@@ -1,0 +1,1 @@
+em++ -o Gameboy.js -g Gameboy.cxx Cpu.cxx Memory.cxx RegisterCollection.cxx Ppu.cxx MemoryBank.cxx -sNO_DISABLE_EXCEPTION_CATCHING -s EXPORTED_FUNCTIONS="['_malloc']" -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 -s EXPORTED_RUNTIME_METHODS=ccall -lembind -s ASSERTIONS=1
