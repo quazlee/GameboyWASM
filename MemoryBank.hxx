@@ -6,12 +6,11 @@
 class MemoryBank
 {
 private:
-    /* data */
     int bankSize;
     int numBanks;
-    std::vector<std::vector<unsigned_two_byte>*>* data;
+    std::vector<unsigned_two_byte>* data;
 public:
-    MemoryBank(int quantity, int size);
+    MemoryBank(int numberOfBanks, int size);
     ~MemoryBank();
     unsigned_two_byte getData(int bank, int location);
     void setData(int bank, int location, unsigned_two_byte value);

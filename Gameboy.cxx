@@ -22,13 +22,15 @@ void Gameboy::initialize()
 {
     cpu->setMemory(memory);
     cpu->setPpu(ppu);
+
+    ppu->setMemory(memory);
 }
 
 void Gameboy::mainLoop()
 {
     while (!ppu->getIsFrameReady())
     {
-        // this.cpu.interrupt();
+        cpu->interrupt();
 
         // this.debug.logger();
 

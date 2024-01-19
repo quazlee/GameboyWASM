@@ -1,8 +1,10 @@
 #pragma once
+#include "Memory.hxx"
 
 class Ppu
 {
 private:
+    Memory *memory = nullptr;
     // Determines if the next frame is ready to be drawn. Will be true after scanline 153 is complete.
     bool isFrameReady = false;
     int mode;
@@ -10,9 +12,14 @@ private:
     int tileMapOne[65536];
     int tileMapTwo[65536];
 
+    int currentScanline;
+    int currenScanlineTicks;
+
 public:
     Ppu(/* args */);
     ~Ppu();
+
+    void setMemory(Memory *value);
 
     bool getIsFrameReady();
     void setIsFrameReady(bool isReady);

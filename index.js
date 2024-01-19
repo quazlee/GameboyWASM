@@ -34,6 +34,7 @@ async function startGameboy() {
     myModule.HEAPU8.set(romInput, heapSpace);
 
     gameboy.readRom(heapSpace, romInput.length)
+    gameboy.initialize();
 
     setInterval(gameboy.mainLoop.bind(gameboy), 17);
 }
