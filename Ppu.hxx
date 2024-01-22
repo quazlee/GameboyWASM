@@ -11,7 +11,7 @@ private:
     bool isFrameReady = false;
     int mode;
 
-    int backgroundMap[65536];
+    std::vector<int> backgroundMap;
     int windowMap[65536];
 
     int currentScanline;
@@ -40,7 +40,7 @@ public:
     int getTileMapIndex(int *tilemap, int x, int y);
     void setTileMapIndex(int *tilemap, int x, int y, int value);
 
-    void populateBackgroundWindowMaps(unsigned_four_byte backgroundAddress, unsigned_four_byte tilemapAddress);
+    std::vector<int> populateBackgroundWindowMaps();
 
     std::vector<int> decodeTile(std::vector<unsigned_two_byte> input);
 

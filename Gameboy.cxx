@@ -4,6 +4,9 @@
 #include <vector>
 #include <emscripten/val.h>
 #include <string>
+#include <emscripten.h>
+using emscripten::val;
+using namespace emscripten;
 
 Gameboy::Gameboy()
 {
@@ -40,8 +43,20 @@ void Gameboy::mainLoop()
     }
 }
 
-void Gameboy::drawBackground()
+uintptr_t Gameboy::getBackground()
 {
+    // EM_JS(EM_VAL, find_myinput, (), {
+    //     let input = document.getElementById('myinput');
+    //     return Emval.toHandle(input);
+    // });
+    // const val document = val::global("document");
+    // val canvas = document.call<val>("getElementById", "background-canvas");
+    // val ctx = canvas.call<val>("getContext", "2d");
+    // return
+    std::vector<int> data = ppu->populateBackgroundWindowMaps();
+    int* arr = new int[65536];
+    std::copy(data.begin(), data.end(), arr);
+    return uintptr_t(arr);
 }
 
 void Gameboy::setBackgroundSettings(std::string backgroundAddress, std::string tilemapAddress)

@@ -23,7 +23,7 @@ public:
     void initialize();
     void mainLoop();
 
-    void drawBackground();
+    uintptr_t getBackground();
     void setBackgroundSettings(std::string backgroundAddress, std::string tilemapAddress);
 };
 
@@ -34,6 +34,6 @@ EMSCRIPTEN_BINDINGS(gameboy)
         .function("readRom", &Gameboy::readRom)
         .function("initialize", &Gameboy::initialize)
         .function("mainLoop", &Gameboy::mainLoop)
-        .function("drawBackground", &Gameboy::drawBackground)
+        .function("getBackground", &Gameboy::getBackground)
         .function("setBackgroundSettings", &Gameboy::setBackgroundSettings);
 }

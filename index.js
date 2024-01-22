@@ -31,13 +31,25 @@ async function startGameboy() {
     let rom = this.files[0];
     let romInput = await readRom(rom);
 
-    var heapSpace = myModule._malloc(romInput.length * romInput.BYTES_PER_ELEMENT);
-    myModule.HEAPU8.set(romInput, heapSpace);
+    var romSpace = myModule._malloc(romInput.length * romInput.BYTES_PER_ELEMENT);
+    myModule.HEAPU8.set(romInput, romSpace);
 
-    gameboy.readRom(heapSpace, romInput.length)
+    gameboy.readRom(romSpace, romInput.length);
     gameboy.initialize();
 
-    setInterval(gameboy.mainLoop.bind(gameboy), 17);
+    setInterval(gameboyMainLoop.bind(gameboy), 17);
+}
+
+function gameboyMainLoop() {
+    gameboy.mainLoop();
+
+    // var heap = gameboy.getBackground();
+    // const arrayData = []
+    // for (let v = 0; v < 65536; v++) {
+    //     arrayData.push(myModule.HEAP32[heap / Int32Array.BYTES_PER_ELEMENT + v])
+    // }
+
+    // console.log(arrayData);
 }
 
 window.addEventListener("keydown", function (e) {
@@ -54,7 +66,7 @@ var debug = new Debug();
 var backgroundCanvasTileMapSource = document.getElementById("background-canvas-tile-map-source");
 var backgroundCanvasBackgroundSource = document.getElementById("background-canvas-background-source");
 
-backgroundCanvasTileMapSource.addEventListener("change",updateBackgroundViewer);
+backgroundCanvasTileMapSource.addEventListener("change", updateBackgroundViewer);
 backgroundCanvasBackgroundSource.addEventListener("change", updateBackgroundViewer);
 function updateBackgroundViewer() {
     gameboy.setBackgroundSettings(backgroundCanvasTileMapSource.value, backgroundCanvasTileMapSource.value);
