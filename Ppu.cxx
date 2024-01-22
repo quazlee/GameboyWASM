@@ -1,4 +1,6 @@
 #include "Ppu.hxx"
+#include "Memory.hxx"
+#include <vector>
 
 Ppu::Ppu()
 {
@@ -51,17 +53,18 @@ void Ppu::modeZero()
 // Vblank Period. Scanlines 144-153
 void Ppu::modeOne()
 {
+    const unsigned_four_byte ioStart = 0xFF00;
     currenScanlineTicks += 2;
-    if (currenScanlineTicks == 456 && memory->io.getData(0x44) < 153)
+    if (currenScanlineTicks == 456 && memory->readMemory(ioStart + 0x44) < 153)
     {
         currenScanlineTicks = 0;
-        memory->io.setData(0x44, memory->io.getData(0x44) + 1);
+        memory->writeMemory(ioStart + 0x44, memory->readMemory(ioStart + 0x44) + 1);
     }
-    else if (currenScanlineTicks == 456 && memory->io.getData(0x44) == 153)
+    else if (currenScanlineTicks == 456 && memory->readMemory(ioStart + 0x44) == 153)
     {
         currenScanlineTicks = 0;
         mode = 2;
-        memory->io.setData(0x44, 0);
+        memory->writeMemory(ioStart + 0x44, 0);
         setIsFrameReady(true);
         // hasWyEqualedLy = false;
         // renderWindow = false;
@@ -84,4 +87,70 @@ int Ppu::getTileMapIndex(int *tilemap, int x, int y)
 void Ppu::setTileMapIndex(int *tilemap, int x, int y, int value)
 {
     tilemap[x + (y * 256)] = value;
+}
+
+std::vector<int> Ppu::decodeTile(std::vector<unsigned_two_byte> input)
+{
+    std::vector<int> tileA;
+    std::vector<int> tileB;
+    for (int i = 0; i < 16; i++)
+    {
+        if (i % 2 == 0)
+        {
+            tileA.push_back(input[i]);
+        }
+        else
+        {
+            tileB.push_back(input[i]);
+        }
+    }
+    std::vector<int> generatedTile;
+
+    for (int y = 0; y < 8; y++)
+    {
+        for (int x = 0; x < 8; x++)
+        {
+            int low = (tileA[y] & (1 << 7 - x)) >> (7 - x);
+            int high = (tileB[y] & (1 << 7 - x)) >> (7 - x);
+            generatedTile[y][x] = (high << 1) | low;
+        }
+    }
+    return generatedTile;
+}
+
+void Ppu::setDebugAddresses(unsigned_four_byte background, unsigned_four_byte tilemap)
+{
+    backgroundDebugAddress = background;
+    tilemapDebugAddress = tilemap;
+}
+
+void Ppu::populateBackgroundWindowMaps(unsigned_four_byte backgroundAddress, unsigned_four_byte tilemapAddress)
+{
+    for (int y = 0; y < 32; y++)
+    {
+        for (int x = 0; x < 32; x++)
+        {
+            int tileNumber;
+            if (backgroundAddress == 0x8000)
+            {
+                tileNumber = memory->readMemory(tilemapAddress + (x) + (y * 32));
+            }
+            else
+            {
+                tileNumber = static_cast<signed_two_byte>(memory->readMemory(tilemapAddress + (x) + (y * 32)))
+            }
+
+            std::vector<unsigned_two_byte> tileSet;
+            for (int i = 0; i < 16; i++)
+            {
+                tileSet.push_back(memory->readMemory(backgroundAddress + (tileNumber * 16) + i));
+            }
+            std::vector<int> decodedTile = decodeTile(tileSet);
+            for (int i = 0; i < 8; i++)
+            {
+                backgroundMap[(x) + (y * 32) + i] = decodedTile[i];
+            }
+            
+        }
+    }
 }

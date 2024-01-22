@@ -1,7 +1,148 @@
 <!doctype html>
 <html>
-<input type="file" id="romInput" accept=".gb" autocomplete="off">F
-<script src="Gameboy.js"></script>
-<script type="module" src="index.js"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script type="module" src="index.js"></script>
+    <script type="module" src="debug.js"></script>
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="table.css">
+    <link rel="stylesheet" href="tooltip.css">
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+    <script src="Gameboy.js"></script>
+</head>
+
+<body>
+    <header>Gameboy Emulator</header>
+    <div class="main-column">
+        <div class="canvas-wrapper">
+            <canvas id="viewport-canvas" width="160" height="144"></canvas>
+        </div>
+
+        <input type="file" id="romInput" accept=".gb" autocomplete="off">
+
+        <select name="save-state-number" id="save-state-number">
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
+        <input type="button" id="save-state" value="Save State">
+        <input type="button" id="load-state" value="Load State">
+
+        <div id="debug-checkbox">
+            <input type="checkbox" name="is-debug" id="is-debug" autocomplete="off">
+            <label for="is-debug">View Debug Tools</label>
+        </div>
+
+        <div id="debug-tools-container">
+
+
+            <div class="debug-tool" id="debug-options">
+                <div class="multiselect">
+                    <div class="selectBox" id="selectBox">
+                        <select>
+                            <option>Choose Debug Tools</option>
+                        </select>
+                        <div class="overSelect"></div>
+                    </div>
+                    <div id="dropdown-options">
+                        <div class="dropdown-option">
+                            <input type="checkbox" name="toggle-logging" id="toggle-logging" />
+                            <label for="toggle-logging">Logging</label>
+                        </div>
+                        <div class="dropdown-option">
+                            <input type="checkbox" name="toggle-tile-maps" id="toggle-tile-maps" />
+                            <label for="toggle-tile-maps">Tile Maps</label>
+                        </div>
+                        <div class="dropdown-option">
+                            <input type="checkbox" name="toggle-background" id="toggle-background" />
+                            <label for="toggle-background">Background Maps</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input class="debug-tool" type="number" id="frames-elapsed" autocomplete="off"></input>
+            <div class="debug-tool" id="fps"></div>
+
+
+            <div class="debug-tool">
+                <div id="flow-controls">
+                    <input type="button" value="Resume" disabled autocomplete="off">
+                    <input type="button" value="Pause" disabled autocomplete="off">
+                    <input type="button" value="Next Opcode" id="step-opcode" disabled autocomplete="off">
+                    <input type="button" value="Next Frame" disabled autocomplete="off">
+                </div>
+
+                <div id="breakpoint-controls">
+                    <select name="breakpoint-type" id="breakpoint-type">
+                        <option value="opcode">Opcode Value</option>
+                        <option value="memory">Memory Value</option>
+                        <option value="program-counter">Program Counter Value</option>
+                    </select>
+
+                    <input type="text" name="breakpoint-value-one" id="breakpoint-value-one" placeholder="0x....">
+
+                    <select name="breakpoint-comparison" id="breakpoint-comparison">
+                        <option value="=">=</option>
+                        <option value="!=">!=</option>
+                        <option value=">">></option>
+                        <option value="&#60;">&#60;</option>
+                        <option value=">=">>=</option>
+                        <option value="&#60;=">&#60;=</option>
+                    </select>
+
+                    <input type="text" name="breakpoint-value-two" id="breakpoint-value-two" placeholder="0x....">
+                    <button id="breakpoint-input-submit">Submit</button>
+                </div>
+
+                <div id="table-wrapper">
+                    <table id="breakpoint-table">
+                        <thead>
+                            <tr>
+                                <th>Enable</th>
+                                <th>Type</th>
+                                <th>Value</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody id="breakpoint-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+
+
+            <div class="debug-tool" id="tile-map-container">
+                <div class="canvas-wrapper">
+                    <canvas id="tile-map-canvas" width="128" height="192"></canvas>
+                </div>
+            </div>
+            <div class="debug-tool" id="background-container">
+                <div class="canvas-wrapper">
+                    <canvas id="background-canvas" width="256" height="256"></canvas>
+                </div>
+
+                <div id="background-canvas-controls">
+                    <select id="background-canvas-tile-map-source">
+                        <option value="0x9800">0x9800</option>
+                        <option value="0x9C00">0x9C00</option>
+                    </select>
+                    <select id="background-canvas-background-source">
+                        <option value="0x8000">0x8000</option>
+                        <option value="0x9000">0x8800</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
 
 </html>

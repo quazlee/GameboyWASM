@@ -1,4 +1,5 @@
-import {  } from "./gameboy.js"
+import { } from "./gameboy.js"
+import { Debug } from "./debug.js";
 var gameboy;
 // var Module2 = {
 //     onRuntimeInitialized: function () {
@@ -45,13 +46,18 @@ window.addEventListener("keydown", function (e) {
     }
 }, false);
 
-function transferNumberArrayToHeap(array, type) {
-    const typedArray = type.array.from(array);
-    const heapPointer = Module._malloc(
-        typedArray.length * typedArray.BYTES_PER_ELEMENT
-    );
+// -------------------
 
-    Module[type.heap].set(typedArray, heapPointer >> 2);
+var debug = new Debug();
 
-    return heapPointer;
+// -------------------
+var backgroundCanvasTileMapSource = document.getElementById("background-canvas-tile-map-source");
+var backgroundCanvasBackgroundSource = document.getElementById("background-canvas-background-source");
+
+backgroundCanvasTileMapSource.addEventListener("change",updateBackgroundViewer);
+backgroundCanvasBackgroundSource.addEventListener("change", updateBackgroundViewer);
+function updateBackgroundViewer() {
+    gameboy.setBackgroundSettings(backgroundCanvasTileMapSource.value, backgroundCanvasTileMapSource.value);
 }
+
+

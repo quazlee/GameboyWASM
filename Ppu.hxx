@@ -1,6 +1,8 @@
 #pragma once
-#include "Memory.hxx"
+#include "Types.hxx"
+#include <vector>
 
+class Memory;
 class Ppu
 {
 private:
@@ -9,11 +11,14 @@ private:
     bool isFrameReady = false;
     int mode;
 
-    int tileMapOne[65536];
-    int tileMapTwo[65536];
+    int backgroundMap[65536];
+    int windowMap[65536];
 
     int currentScanline;
     int currenScanlineTicks;
+
+    unsigned_four_byte backgroundDebugAddress = 0x8000;
+    unsigned_four_byte tilemapDebugAddress = 0x9800;
 
 public:
     Ppu(/* args */);
@@ -34,4 +39,10 @@ public:
 
     int getTileMapIndex(int *tilemap, int x, int y);
     void setTileMapIndex(int *tilemap, int x, int y, int value);
+
+    void populateBackgroundWindowMaps(unsigned_four_byte backgroundAddress, unsigned_four_byte tilemapAddress);
+
+    std::vector<int> decodeTile(std::vector<unsigned_two_byte> input);
+
+    void setDebugAddresses(unsigned_four_byte background, unsigned_four_byte tilemap);
 };
