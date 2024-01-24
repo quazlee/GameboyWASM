@@ -62,4 +62,5 @@ public:
     void writeMemory(unsigned_four_byte address, unsigned_two_byte value);
 
     void writeMemoryMbcZero(unsigned_four_byte address, unsigned_two_byte value);
+    void writeMemoryMbcOne(unsigned_four_byte address, unsigned_two_byte value);
 };

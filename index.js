@@ -1,4 +1,4 @@
-import { } from "./gameboy.js"
+import { } from "./Gameboy.js"
 import { Debug } from "./debug.js";
 var gameboy;
 // var Module2 = {
@@ -26,13 +26,13 @@ async function readRom(rom) {
     });
 }
 
-
 async function startGameboy() {
     let rom = this.files[0];
     let romInput = await readRom(rom);
 
     var romSpace = myModule._malloc(romInput.length * romInput.BYTES_PER_ELEMENT);
     myModule.HEAPU8.set(romInput, romSpace);
+
 
     gameboy.readRom(romSpace, romInput.length);
     gameboy.initialize();
@@ -42,6 +42,11 @@ async function startGameboy() {
 
 function gameboyMainLoop() {
     gameboy.mainLoop();
+    let debugStringHeap = gameboy.getDebugStringFull();
+    const debugStringData = [];
+    for (let i = 0; i < debugStringHeap; i++) {
+        debugStringData.push(String.fromCharCode(myModule.HEAP8[debugStringHeap / Int8Array.BYTES_PER_ELEMENT + i]));
+    }
 
     // var heap = gameboy.getBackground();
     // const arrayData = []

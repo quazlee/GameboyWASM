@@ -33,6 +33,10 @@ public:
     void setMemory(Memory* value);
     void setPpu(Ppu* value);
 
+    RegisterCollection* getRegisters();
+    unsigned_four_byte getStackPointer();
+    unsigned_four_byte getProgramCounter();
+
     void jumpConditional(bool condition);
     void jumpRelativeConditional(bool condition);
 

@@ -55,6 +55,7 @@ void Ppu::modeZero()
 void Ppu::modeOne()
 {
     const unsigned_four_byte ioStart = 0xFF00;
+
     currenScanlineTicks += 2;
     if (currenScanlineTicks == 456 && memory->readMemory(ioStart + 0x44) < 153)
     {
@@ -113,7 +114,7 @@ std::vector<int> Ppu::decodeTile(std::vector<unsigned_two_byte> input)
         {
             int low = (tileA[y] & (1 << (7 - x))) >> (7 - x);
             int high = (tileB[y] & (1 << (7 - x))) >> (7 - x);
-            generatedTile[x + y*8] = (high << 1) | low;
+            generatedTile[x + y * 8] = (high << 1) | low;
         }
     }
     return generatedTile;
@@ -152,9 +153,7 @@ std::vector<int> Ppu::populateBackgroundWindowMaps()
             {
                 backgroundMap[(x) + (y * 32) + i] = decodedTile[i];
             }
-            
         }
     }
     return backgroundMap;
 }
-

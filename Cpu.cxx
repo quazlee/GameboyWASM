@@ -11,6 +11,21 @@ void Cpu::setPpu(Ppu *value)
     ppu = value;
 }
 
+RegisterCollection *Cpu::getRegisters()
+{
+    return &registers;
+}
+
+unsigned_four_byte Cpu::getStackPointer()
+{
+    return stackPointer;
+}
+
+unsigned_four_byte Cpu::getProgramCounter()
+{
+    return programCounter;
+}
+
 void Cpu::jumpConditional(bool condition)
 {
     unsigned_two_byte currentOpcodeLow = fetch();

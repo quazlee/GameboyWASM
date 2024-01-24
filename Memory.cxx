@@ -10,7 +10,7 @@ Memory::~Memory()
 {
 }
 
-void Memory::initialize(unsigned_two_byte * romInput, int romLength)
+void Memory::initialize(unsigned_two_byte *romInput, int romLength)
 {
     mbcType = romInput[0x147];
     int romSize = romInput[0x148];
@@ -151,9 +151,9 @@ void Memory::writeMemory(unsigned_four_byte address, unsigned_two_byte value)
     case 0: // No MBC
         writeMemoryMbcZero(address, value);
         break;
-        // case 1://MBC1
-        //     writeMemoryMbcOne(address, value);
-        //     break;
+    case 1: // MBC1
+        writeMemoryMbcOne(address, value);
+        break;
         // case 0x13://MBC3+RAM+BATTERY
         //     writeMemoryMbcThree(address, value);
         //     break;
@@ -191,6 +191,105 @@ void Memory::writeMemoryMbcZero(unsigned_four_byte address, unsigned_two_byte va
     {
         if (address == 0xFF04)
         { // RESET TIMA
+            io->setData(0, address - 0xFF00, 0);
+        }
+        else if (address == 0xFF46)
+        { // OAM DMA
+            io->setData(0, address - 0xFF00, value);
+            for (int i = 0; i < 160; i++)
+            {
+                oam->setData(0, i, readMemory((value << 8) | i));
+                cpu->tickClock(1);
+            }
+        }
+        else
+        {
+            io->setData(0, address - 0xFF00, value);
+        }
+    }
+    else if (address < 0xFFFF)
+    {
+        hram->setData(0, address - 0xFF80, value);
+    }
+    else if (address == 0xFFFF)
+    {
+        ie->setData(0, 0, value);
+    }
+}
+
+void Memory::writeMemoryMbcOne(unsigned_four_byte address, unsigned_two_byte value)
+{ // TODO
+
+    if (address < 0x2000)
+    { // Any write to here will enable RAM if the value has a lower nibble of 0xA                let low = value | 0xF;
+        unsigned_two_byte low = value | 0xF;
+        if (low == 0xA)
+        {
+            ramEnabled = true;
+        }
+        else
+        {
+            ramEnabled = false;
+        }
+    }
+    else if (address < 0x4000)
+    { // Writing to here will change the active ROM Bank
+        // TODO
+        unsigned_two_byte maskedValue = value & 0x1F;
+        switch (maskedValue)
+        {
+        case 0:
+            maskedValue = 1;
+            break;
+        }
+        currentRomBank = (value - 1);
+    }
+    else if (address < 0x6000)
+    {
+        // TODO
+        // need to figure out ram if need bank or not
+        if (ramEnabled)
+        {
+        }
+    }
+    else if (address < 0x8000)
+    {
+        if (value == 0)
+        {
+            bankMode = false;
+        }
+        else if (value == 1)
+        {
+            bankMode = true;
+        }
+    }
+    else if (address < 0xA000)
+    {
+        vram->setData(0, address - 0x8000, value);
+    }
+    else if (address < 0xC000)
+    {
+        if (ramEnabled)
+        {
+            ram->setData(0, address - 0xA000, value);
+        }
+    }
+    else if (address < 0xE000)
+    {
+        wram->setData(0, address - 0xC000, value);
+    }
+    else if (address < 0xFE00)
+        return echoram->setData(0, address - 0xE000, value);
+    else if (address < 0xFEA0)
+    {
+        oam->setData(0, address - 0xFE00, value);
+    }
+    else if (address < 0xFF00)
+        return prohibited->setData(0, address - 0xFEA0, value);
+    else if (address < 0xFF80)
+    {
+        if (address == 0xFF04)
+        {
             io->setData(0, address - 0xFF00, 0);
         }
         else if (address == 0xFF46)
