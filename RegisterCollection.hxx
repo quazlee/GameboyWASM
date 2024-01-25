@@ -15,7 +15,7 @@ public:
     void setRegisterDouble(int registerHigh, int registerLow, unsigned_two_byte valueHigh, unsigned_two_byte valueLow);
 
     unsigned_two_byte getRegister(int registerIn);
-    unsigned_two_byte getRegisterDouble(int registerHigh, int registerLow);
+    unsigned_four_byte getRegisterDouble(int registerHigh, int registerLow);
 
     void setFlag(int flag);
     int getFlag(int flag);

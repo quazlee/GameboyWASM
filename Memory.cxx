@@ -40,12 +40,12 @@ void Memory::initialize(unsigned_two_byte *romInput, int romLength)
     int romArrayIndex = 0;
     int currentBankIndex = 0;
     int currentBank = 0;
-    while (romArrayIndex < 16384)
-    {
-        rom->setData(0, romArrayIndex, romInput[romArrayIndex]);
-        romArrayIndex++;
-    }
-    while (romArrayIndex < romSize - 1)
+    // while (romArrayIndex < 16384)
+    // {
+    //     rom->setData(0, romArrayIndex, romInput[romArrayIndex]);
+    //     romArrayIndex++;
+    // }
+    while (romArrayIndex < romLength - 1)
     {
         if (currentBankIndex == 16384)
         {
@@ -121,7 +121,7 @@ unsigned_two_byte Memory::readMemory(unsigned_four_byte address)
     if (address < 0x4000)
         return rom->getData(0, address);
     else if (address < 0x8000)
-        return rom->getData(currentRomBank, address - 0x4000);
+        return rom->getData(currentRomBank , address - 0x4000);
     else if (address < 0xA000)
         return vram->getData(0, address - 0x8000);
     else if (address < 0xC000)

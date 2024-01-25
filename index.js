@@ -42,12 +42,9 @@ async function startGameboy() {
 
 function gameboyMainLoop() {
     gameboy.mainLoop();
-    let debugStringHeap = gameboy.getDebugStringFull();
-    const debugStringData = [];
-    for (let i = 0; i < debugStringHeap; i++) {
-        debugStringData.push(String.fromCharCode(myModule.HEAP8[debugStringHeap / Int8Array.BYTES_PER_ELEMENT + i]));
-    }
 
+    // downloadDebugString();
+    
     // var heap = gameboy.getBackground();
     // const arrayData = []
     // for (let v = 0; v < 65536; v++) {
@@ -55,6 +52,21 @@ function gameboyMainLoop() {
     // }
 
     // console.log(arrayData);
+}
+
+function downloadDebugString() {
+    let debugStringHeap = gameboy.getDebugStringFull();
+    const debugStringData = [];
+    for (let i = 0; i < debugStringHeap; i++) {
+        debugStringData.push(String.fromCharCode(myModule.HEAP8[debugStringHeap / Int8Array.BYTES_PER_ELEMENT + i]));
+    }
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(debugStringData.join("")));
+    element.setAttribute('download', "Log");
+    element.style.display = 'none';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
 }
 
 window.addEventListener("keydown", function (e) {

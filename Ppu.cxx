@@ -141,12 +141,12 @@ std::vector<int> Ppu::populateBackgroundWindowMaps()
             {
                 tileNumber = static_cast<signed_two_byte>(memory->readMemory(tilemapDebugAddress + (x) + (y * 32)));
             }
-            std::cout << tileNumber << std::endl;
+            // std::cout << tileNumber << std::endl;
             std::vector<unsigned_two_byte> tileSet;
             for (int i = 0; i < 16; i++)
             {
                 tileSet.push_back(memory->readMemory(backgroundDebugAddress + (tileNumber * 16) + i));
-                std::cout << tileSet[i] << std::endl;
+                // std::cout << tileSet[i] << std::endl;
             }
             std::vector<int> decodedTile = decodeTile(tileSet);
             for (int i = 0; i < 8; i++)

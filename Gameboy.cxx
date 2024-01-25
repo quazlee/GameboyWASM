@@ -37,15 +37,17 @@ void Gameboy::initialize()
 
 void Gameboy::mainLoop()
 {
+    // emptyDebugString();
     while (!ppu->getIsFrameReady())
     {
         cpu->interrupt();
 
         // this.debug.logger();
-        getNextInstructionDebugLine();
+        // getNextInstructionDebugLine();
         cpu->execute();
         // this.controls.updateInputState();
     }
+    ppu->setIsFrameReady(false);
 }
 
 uintptr_t Gameboy::getBackground()
@@ -102,4 +104,10 @@ void Gameboy::getNextInstructionDebugLine()
 uintptr_t Gameboy::getDebugStringFull()
 {
     return uintptr_t(debugStringFull);
+}
+
+void Gameboy::emptyDebugString()
+{
+    delete[] debugStringFull;
+    debugStringFull = new char [0];
 }

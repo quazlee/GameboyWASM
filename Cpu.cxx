@@ -1,5 +1,5 @@
 #include "Cpu.hxx"
-
+#include <iostream>
 
 void Cpu::setMemory(Memory *value)
 {
@@ -337,6 +337,14 @@ void Cpu::execute()
                 tickClock(12);
                 break;
             }
+            case 0x2:
+            {
+                unsigned_four_byte location = registers.getRegisterDouble(registerID::D, registerID::E);
+                unsigned_two_byte value = registers.getRegister(registerID::A);
+                memory->writeMemory(location, value);
+                tickClock(8);
+                break;
+            }
             case 0x3:
             {
                 registers.incRegisterDouble(registerID::D, registerID::E);
@@ -533,6 +541,7 @@ void Cpu::execute()
                 unsigned_two_byte value = registers.getRegister(registerID::HL);
                 registers.incRegisterDouble(registerID::H, registerID::L);
                 registers.setRegister(registerID::A, value);
+
                 tickClock(8);
                 break;
             }

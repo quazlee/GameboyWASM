@@ -30,6 +30,7 @@ public:
 
     void getNextInstructionDebugLine();
     uintptr_t getDebugStringFull();
+    void emptyDebugString();
 };
 
 EMSCRIPTEN_BINDINGS(gameboy)
@@ -41,5 +42,6 @@ EMSCRIPTEN_BINDINGS(gameboy)
         .function("mainLoop", &Gameboy::mainLoop)
         .function("getBackground", &Gameboy::getBackground)
         .function("setBackgroundSettings", &Gameboy::setBackgroundSettings)
-        .function("getDebugStringFull", &Gameboy::getDebugStringFull);
+        .function("getDebugStringFull", &Gameboy::getDebugStringFull)
+        .function("emptyDebugString", &Gameboy::emptyDebugString);
 }

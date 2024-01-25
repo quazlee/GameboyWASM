@@ -32,9 +32,13 @@ unsigned_two_byte RegisterCollection::getRegister(int registerIn)
     return data[registerIn];
 }
 
-unsigned_two_byte RegisterCollection::getRegisterDouble(int registerHigh, int registerLow)
+unsigned_four_byte RegisterCollection::getRegisterDouble(int registerHigh, int registerLow)
 {
-    return (data[registerHigh] << 8) | data[registerLow];
+    unsigned_four_byte valueHigh = static_cast<unsigned_four_byte>(data[registerHigh]);
+    valueHigh = valueHigh  << 8;
+    unsigned_four_byte valueLow = static_cast<unsigned_four_byte>(data[registerLow]);
+    unsigned_four_byte output = valueHigh | valueLow;
+    return output;
 }
 
 void RegisterCollection::setFlag(int flag)
