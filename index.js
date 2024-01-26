@@ -45,8 +45,11 @@ function gameboyMainLoop() {
     gameboy.mainLoop();
 
     buildDebugString(bigDebugString);
-    if (bigDebugString.length == 10) {
-        downloadDebugString(bigDebugString);
+    if (bigDebugString.length == 6) {
+        for (let i = 0; i < 6; i++) {
+            downloadDebugString([bigDebugString[i]]);
+            
+        }
     }
 
     // backgroundMapDrawer();
