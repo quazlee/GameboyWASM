@@ -1,6 +1,7 @@
 #pragma once
 #include "Types.hxx"
 #include <vector>
+// #include "canvas.h"
 
 class Memory;
 class Ppu
@@ -11,14 +12,14 @@ private:
     bool isFrameReady = false;
     int mode;
 
-    std::vector<int> backgroundMap;
-    int windowMap[65536];
-
     int currentScanline;
     int currenScanlineTicks;
 
     unsigned_four_byte backgroundDebugAddress = 0x8000;
     unsigned_four_byte tilemapDebugAddress = 0x9800;
+
+    // HTMLCanvasElement *tileMapCanvas = createCanvas("tile-map-canvas");
+    // CanvasRenderingContext2D *tileMapCanvasctx = tileMapCanvas->getContext(tileMapCanvas, "2d");
 
 public:
     Ppu(/* args */);
@@ -41,6 +42,7 @@ public:
     void setTileMapIndex(int *tilemap, int x, int y, int value);
 
     std::vector<int> populateBackgroundWindowMaps();
+    std::vector<int> populateTileMap();
 
     std::vector<int> decodeTile(std::vector<unsigned_two_byte> input);
 

@@ -40,28 +40,36 @@ async function startGameboy() {
     setInterval(gameboyMainLoop.bind(gameboy), 17);
 }
 
+let bigDebugString = [];
 function gameboyMainLoop() {
     gameboy.mainLoop();
 
-    // downloadDebugString();
-    
-    // var heap = gameboy.getBackground();
-    // const arrayData = []
-    // for (let v = 0; v < 65536; v++) {
-    //     arrayData.push(myModule.HEAP32[heap / Int32Array.BYTES_PER_ELEMENT + v])
-    // }
+    buildDebugString(bigDebugString);
+    if (bigDebugString.length == 5) {
+        downloadDebugString(bigDebugString);
+    }
+
+    // backgroundMapDrawer();
+    // tileMapDrawer();
+
 
     // console.log(arrayData);
 }
 
-function downloadDebugString() {
+
+function buildDebugString(bigDebugString) {
     let debugStringHeap = gameboy.getDebugStringFull();
     const debugStringData = [];
     for (let i = 0; i < debugStringHeap; i++) {
         debugStringData.push(String.fromCharCode(myModule.HEAP8[debugStringHeap / Int8Array.BYTES_PER_ELEMENT + i]));
     }
+    bigDebugString.push(debugStringData.join(""));
+}
+
+function downloadDebugString(bigDebugString) {
+
     var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(debugStringData.join("")));
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(bigDebugString.join("")));
     element.setAttribute('download', "Log");
     element.style.display = 'none';
     document.body.appendChild(element);
@@ -82,6 +90,10 @@ var debug = new Debug();
 // -------------------
 var backgroundCanvasTileMapSource = document.getElementById("background-canvas-tile-map-source");
 var backgroundCanvasBackgroundSource = document.getElementById("background-canvas-background-source");
+var backgroundCanvas = document.getElementById("background-canvas");
+var backgroundCanvasCtx = backgroundCanvas.getContext("2d");
+var tileMapCanvas = document.getElementById("tile-map-canvas");
+var tileMapCanvasCtx = tileMapCanvas.getContext("2d");
 
 backgroundCanvasTileMapSource.addEventListener("change", updateBackgroundViewer);
 backgroundCanvasBackgroundSource.addEventListener("change", updateBackgroundViewer);
@@ -89,4 +101,50 @@ function updateBackgroundViewer() {
     gameboy.setBackgroundSettings(backgroundCanvasTileMapSource.value, backgroundCanvasTileMapSource.value);
 }
 
+var colorPalette = ["rgba(255, 255, 255, 1)",
+    "rgba(172, 172, 172, 1)",
+    "rgba(86, 86, 86, 1)",
+    "rgba(0, 0, 0, 1)"];
 
+function drawToCanvas(x, y, color, ctx) {
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, 1, 1);
+}
+function tileMapDrawer() {
+    var heap = gameboy.getTileMap();
+    var tileMapData = [];
+    for (let v = 0; v < 24576; v++) {
+        tileMapData.push(myModule.HEAP32[heap / Int32Array.BYTES_PER_ELEMENT + v])
+    }
+
+    for (let y = 0; y < 24; y++) {
+        for (let x = 0; x < 16; x++) {
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    drawToCanvas((x * 8) + j, (y * 8) + i, colorPalette[tileMapData.pop()], tileMapCanvasCtx);
+                }
+            }
+        }
+    }
+
+
+}
+function backgroundMapDrawer() {
+
+    var heap = gameboy.getBackground();
+    var backgroundData = [];
+    for (let v = 0; v < 65536; v++) {
+        backgroundData.push(myModule.HEAP32[heap / Int32Array.BYTES_PER_ELEMENT + v])
+    }
+
+    for (let y = 0; y < 32; y++) {
+        for (let x = 0; x < 32; x++) {
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    drawToCanvas((x * 8) + j, (y * 8) + i, colorPalette[backgroundData.pop()], backgroundCanvasCtx);
+                }
+            }
+        }
+    }
+}

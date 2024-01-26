@@ -37,13 +37,12 @@ void Gameboy::initialize()
 
 void Gameboy::mainLoop()
 {
-    // emptyDebugString();
+    emptyDebugString();
     while (!ppu->getIsFrameReady())
     {
         cpu->interrupt();
 
-        // this.debug.logger();
-        // getNextInstructionDebugLine();
+        getNextInstructionDebugLine();
         cpu->execute();
         // this.controls.updateInputState();
     }
@@ -52,18 +51,20 @@ void Gameboy::mainLoop()
 
 uintptr_t Gameboy::getBackground()
 {
-    // EM_JS(EM_VAL, find_myinput, (), {
-    //     let input = document.getElementById('myinput');
-    //     return Emval.toHandle(input);
-    // });
-    // const val document = val::global("document");
-    // val canvas = document.call<val>("getElementById", "background-canvas");
-    // val ctx = canvas.call<val>("getContext", "2d");
-    // return
+    delete[] debugBackgroundMap;
     std::vector<int> data = ppu->populateBackgroundWindowMaps();
-    int *arr = new int[65536];
-    std::copy(data.begin(), data.end(), arr);
-    return uintptr_t(arr);
+    debugBackgroundMap = new int[65536];
+    std::copy(data.begin(), data.end(), debugBackgroundMap);
+    return uintptr_t(debugBackgroundMap);
+}
+
+uintptr_t Gameboy::getTileMap()
+{
+    delete[] debugTileMap;
+    std::vector<int> data = ppu->populateTileMap();
+    debugTileMap = new int[24576];
+    std::copy(data.begin(), data.end(), debugTileMap);
+    return uintptr_t(debugTileMap);
 }
 
 void Gameboy::setBackgroundSettings(std::string backgroundAddress, std::string tilemapAddress)
@@ -109,5 +110,5 @@ uintptr_t Gameboy::getDebugStringFull()
 void Gameboy::emptyDebugString()
 {
     delete[] debugStringFull;
-    debugStringFull = new char [0];
+    debugStringFull = new char[0];
 }

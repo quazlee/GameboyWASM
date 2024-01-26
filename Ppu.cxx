@@ -2,9 +2,12 @@
 #include "Memory.hxx"
 #include <vector>
 #include <iostream>
+#include <algorithm>
+
 
 Ppu::Ppu()
 {
+
 }
 
 Ppu::~Ppu()
@@ -114,7 +117,7 @@ std::vector<int> Ppu::decodeTile(std::vector<unsigned_two_byte> input)
         {
             int low = (tileA[y] & (1 << (7 - x))) >> (7 - x);
             int high = (tileB[y] & (1 << (7 - x))) >> (7 - x);
-            generatedTile[x + y * 8] = (high << 1) | low;
+            generatedTile.push_back((high << 1) | low);
         }
     }
     return generatedTile;
@@ -128,6 +131,7 @@ void Ppu::setDebugAddresses(unsigned_four_byte background, unsigned_four_byte ti
 
 std::vector<int> Ppu::populateBackgroundWindowMaps()
 {
+    std::vector<int> output;
     for (int y = 0; y < 32; y++)
     {
         for (int x = 0; x < 32; x++)
@@ -136,24 +140,54 @@ std::vector<int> Ppu::populateBackgroundWindowMaps()
             if (backgroundDebugAddress == 0x8000)
             {
                 tileNumber = memory->readMemory(tilemapDebugAddress + (x) + (y * 32));
+                if(tileNumber != 0 && tileNumber != 32){
+                    std::cout << tileNumber << std::endl;
+                }
             }
             else
             {
                 tileNumber = static_cast<signed_two_byte>(memory->readMemory(tilemapDebugAddress + (x) + (y * 32)));
             }
-            // std::cout << tileNumber << std::endl;
             std::vector<unsigned_two_byte> tileSet;
             for (int i = 0; i < 16; i++)
             {
                 tileSet.push_back(memory->readMemory(backgroundDebugAddress + (tileNumber * 16) + i));
-                // std::cout << tileSet[i] << std::endl;
             }
             std::vector<int> decodedTile = decodeTile(tileSet);
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 64; i++)
             {
-                backgroundMap[(x) + (y * 32) + i] = decodedTile[i];
+                if(decodedTile[i] != 0){
+                    std::cout << decodedTile[i] << std::endl;
+                }
+                output.push_back(decodedTile[i]);
             }
         }
     }
-    return backgroundMap;
+    std::reverse(output.begin(), output.end());
+    return output;
+}
+
+std::vector<int> Ppu::populateTileMap()
+{
+    std::vector<int> output;
+    for (int y = 0; y < 24; y++)
+    {
+        for (int x = 0; x < 16; x++)
+        {
+            unsigned_four_byte base = 0x8000 + (x * 16) + (y * 192);
+            std::vector<unsigned_two_byte> tileSet;
+            for (int i = 0; i < 16; i++)
+            {
+                tileSet.push_back(memory->readMemory(base + i));
+            }
+            std::vector<int> decodedTile = decodeTile(tileSet);
+            for (int i = 0; i < 64; i++)
+            {
+                output.push_back(decodedTile[i]);
+            }
+            
+        }
+    }
+    std::reverse(output.begin(), output.end());
+    return output;
 }

@@ -15,7 +15,9 @@ private:
     Ppu *ppu = new Ppu();
     Memory *memory = new Memory();
 
-    char* debugStringFull = new char [0];
+    char *debugStringFull = new char[0];
+    int *debugBackgroundMap = new int[65536];
+    int *debugTileMap = new int[24576];
 
 public:
     Gameboy();
@@ -26,6 +28,7 @@ public:
     void mainLoop();
 
     uintptr_t getBackground();
+    uintptr_t getTileMap();
     void setBackgroundSettings(std::string backgroundAddress, std::string tilemapAddress);
 
     void getNextInstructionDebugLine();
@@ -41,6 +44,7 @@ EMSCRIPTEN_BINDINGS(gameboy)
         .function("initialize", &Gameboy::initialize)
         .function("mainLoop", &Gameboy::mainLoop)
         .function("getBackground", &Gameboy::getBackground)
+        .function("getTileMap", &Gameboy::getTileMap)
         .function("setBackgroundSettings", &Gameboy::setBackgroundSettings)
         .function("getDebugStringFull", &Gameboy::getDebugStringFull)
         .function("emptyDebugString", &Gameboy::emptyDebugString);

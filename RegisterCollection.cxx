@@ -1,4 +1,5 @@
 #include "RegisterCollection.hxx"
+#include <iostream>
 
 RegisterCollection::RegisterCollection()
 {
@@ -35,7 +36,7 @@ unsigned_two_byte RegisterCollection::getRegister(int registerIn)
 unsigned_four_byte RegisterCollection::getRegisterDouble(int registerHigh, int registerLow)
 {
     unsigned_four_byte valueHigh = static_cast<unsigned_four_byte>(data[registerHigh]);
-    valueHigh = valueHigh  << 8;
+    valueHigh = valueHigh << 8;
     unsigned_four_byte valueLow = static_cast<unsigned_four_byte>(data[registerLow]);
     unsigned_four_byte output = valueHigh | valueLow;
     return output;
@@ -380,7 +381,7 @@ void RegisterCollection::assignCarryShiftRight(unsigned_two_byte value)
 
 void RegisterCollection::assignCarry(unsigned_two_byte value1, unsigned_two_byte value2)
 {
-    if ((value1 + value2) < value1)
+    if (((value1 + value2) & 0xFF) < value1)
         setFlag(4);
     else
         clearFlag(4);
@@ -388,7 +389,7 @@ void RegisterCollection::assignCarry(unsigned_two_byte value1, unsigned_two_byte
 
 void RegisterCollection::assignCarryDouble(unsigned_four_byte value1, unsigned_four_byte value2)
 {
-    if ((value1 + value2) < value1)
+    if (((value1 + value2) & 0xFFFF) < value1)
         setFlag(4);
     else
         clearFlag(4);
@@ -397,12 +398,12 @@ void RegisterCollection::assignCarryDouble(unsigned_four_byte value1, unsigned_f
 void RegisterCollection::assignCarryAdc(unsigned_two_byte value1, unsigned_two_byte value2, unsigned_two_byte value3)
 {
     int flag = 0;
-    if ((value1 + value2) < value1)
+    if (((value1 + value2) & 0xFF) < value1)
     {
         flag |= 1;
     }
     unsigned_two_byte temp = (value1 + value2);
-    if ((temp + value3) < temp)
+    if (((temp + value3) & 0xFF) < temp)
     {
         flag |= 1;
     }
@@ -415,12 +416,12 @@ void RegisterCollection::assignCarryAdc(unsigned_two_byte value1, unsigned_two_b
 void RegisterCollection::assignCarrySbc(unsigned_two_byte value1, unsigned_two_byte value2, unsigned_two_byte value3)
 {
     int flag = 0;
-    if ((value1 - value2) > value1)
+    if (((value1 - value2) & 0xFF) > value1)
     {
         flag |= 1;
     }
     unsigned_two_byte temp = (value1 - value2);
-    if ((temp - value3) > temp)
+    if (((temp - value3) & 0xFF) > temp)
     {
         flag |= 1;
     }
@@ -432,7 +433,7 @@ void RegisterCollection::assignCarrySbc(unsigned_two_byte value1, unsigned_two_b
 
 void RegisterCollection::assignCarrySub(unsigned_two_byte value1, unsigned_two_byte value2)
 {
-    if ((value1 - value2) > value1)
+    if (((value1 - value2) & 0xFF) > value1)
         setFlag(4);
     else
         clearFlag(4);
