@@ -1,61 +1,11 @@
 #pragma once
+#include <iomanip>
+#include <iostream>
 
 typedef short signed_four_byte;
 typedef unsigned short unsigned_four_byte;
 typedef char signed_two_byte;
 typedef unsigned char unsigned_two_byte;
-
-// class unsigned_four_byte
-// {
-// private:
-//     unsigned short value = 0;
-
-// public:
-//     unsigned_four_byte(unsigned short value)
-//     {
-//         this->value = value;
-//     }
-
-//     unsigned_four_byte(unsigned char high, unsigned char low)
-//     {
-//         this->value = (high << 8) | low;
-//     }
-
-//     unsigned_four_byte operator=(unsigned_four_byte const& value)
-//     {
-//         this->value = value;
-//     }
-
-//     unsigned_four_byte operator<(unsigned short const& value)
-//     {
-//         return this->value < value;
-//     }
-
-//     unsigned_four_byte operator>(unsigned short const& value)
-//     {
-//         return this->value > value;
-//     }
-
-//     unsigned_four_byte operator&(unsigned short const& value)
-//     {
-//         return this->value & value;
-//     }
-// }
-
-// class unsigned_two_byte
-// {
-// private:
-//     unsigned char value = 0;
-
-// public:
-//     unsigned_two_byte(unsigned char value)
-//     {
-//         this->value = value;
-//     }
-
-    
-
-// }
 
 enum registerID {
     B,
@@ -68,3 +18,6 @@ enum registerID {
     A,
     F
 };
+
+#define formatter2 std::uppercase << std::setfill('0') << std::setw(2) << std::hex
+#define formatter4 std::uppercase << std::setfill('0') << std::setw(4) << std::hex

@@ -45,7 +45,7 @@ function gameboyMainLoop() {
     gameboy.mainLoop();
 
     buildDebugString(bigDebugString);
-    if (bigDebugString.length == 5) {
+    if (bigDebugString.length == 10) {
         downloadDebugString(bigDebugString);
     }
 

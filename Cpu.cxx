@@ -1153,6 +1153,9 @@ void Cpu::execute()
     }
     else
     {
+        currentOpcode = fetch();
+        currentOpcodeHigh = currentOpcode >> 4;
+        currentOpcodeLow = currentOpcode & 0xF;
         switch (currentOpcodeHigh)
         {
         case 0x0:

@@ -32,7 +32,7 @@ public:
     void orA(unsigned_two_byte targetValue);
     void cpA(unsigned_two_byte targetValue);
 
-    void addHL(unsigned_two_byte value);
+    void addHL(unsigned_four_byte value);
 
     void incRegister(int registerIn);
     void incRegisterDouble(int registerHigh, int registerLow);
