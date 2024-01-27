@@ -1114,7 +1114,7 @@ void Cpu::execute()
             {
                 unsigned_two_byte value = fetch();
                 signed_two_byte signedValue = static_cast<signed_two_byte>(value);
-                signed_two_byte newValue = value + signedValue;
+                unsigned_four_byte newValue = stackPointer + signedValue;
                 registers.setRegisterDouble(registerID::H, registerID::L, newValue >> 8, newValue & 0xFF);
                 registers.assignHalfcarryAdd(stackPointer & 0xFF, value);
                 registers.assignCarry(stackPointer & 0xFF, value);

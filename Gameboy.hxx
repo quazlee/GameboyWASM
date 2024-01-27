@@ -16,6 +16,7 @@ private:
     Memory *memory = new Memory();
 
     char *debugStringFull = new char[0];
+    int debugStringLength = 0;
     int *debugBackgroundMap = new int[65536];
     int *debugTileMap = new int[24576];
 
@@ -34,6 +35,7 @@ public:
     void getNextInstructionDebugLine();
     uintptr_t getDebugStringFull();
     void emptyDebugString();
+    int getDebugStringLength();
 };
 
 EMSCRIPTEN_BINDINGS(gameboy)
@@ -47,5 +49,6 @@ EMSCRIPTEN_BINDINGS(gameboy)
         .function("getTileMap", &Gameboy::getTileMap)
         .function("setBackgroundSettings", &Gameboy::setBackgroundSettings)
         .function("getDebugStringFull", &Gameboy::getDebugStringFull)
+        .function("getDebugStringLength", &Gameboy::getDebugStringLength)
         .function("emptyDebugString", &Gameboy::emptyDebugString);
 }

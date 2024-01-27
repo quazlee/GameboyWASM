@@ -37,12 +37,13 @@ void Gameboy::initialize()
 
 void Gameboy::mainLoop()
 {
-    emptyDebugString();
+    // emptyDebugString();
+    // debugStringLength = 0;
     while (!ppu->getIsFrameReady())
     {
         cpu->interrupt();
 
-        getNextInstructionDebugLine();
+        // getNextInstructionDebugLine();
         cpu->execute();
         // this.controls.updateInputState();
     }
@@ -97,6 +98,7 @@ void Gameboy::getNextInstructionDebugLine()
     std::string oldString = std::string(debugStringFull);
     delete[] debugStringFull;
     std::string currentString = debugString.str();
+    debugStringLength += currentString.length();
     std::string newString = oldString + currentString;
     debugStringFull = new char[newString.length() + 1];
     strcpy(debugStringFull, newString.c_str());
@@ -111,4 +113,9 @@ void Gameboy::emptyDebugString()
 {
     delete[] debugStringFull;
     debugStringFull = new char[0];
+}
+
+int Gameboy::getDebugStringLength()
+{
+    return debugStringLength;
 }

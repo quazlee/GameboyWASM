@@ -44,16 +44,17 @@ let bigDebugString = [];
 function gameboyMainLoop() {
     gameboy.mainLoop();
 
-    buildDebugString(bigDebugString);
-    if (bigDebugString.length == 6) {
-        for (let i = 0; i < 6; i++) {
-            downloadDebugString([bigDebugString[i]]);
+    // buildDebugString(bigDebugString);
+    // if (bigDebugString.length == 10) {
+    //     // for (let i = 0; i < 6; i++) {
+    //     //     downloadDebugString([bigDebugString[i]]);
             
-        }
-    }
+    //     // }
+    //     downloadDebugString([bigDebugString.join("")]);
+    // }
 
-    // backgroundMapDrawer();
-    // tileMapDrawer();
+    backgroundMapDrawer();
+    tileMapDrawer();
 
 
     // console.log(arrayData);
@@ -63,7 +64,7 @@ function gameboyMainLoop() {
 function buildDebugString(bigDebugString) {
     let debugStringHeap = gameboy.getDebugStringFull();
     const debugStringData = [];
-    for (let i = 0; i < debugStringHeap; i++) {
+    for (let i = 3; i < gameboy.getDebugStringLength() + 3; i++) {
         debugStringData.push(String.fromCharCode(myModule.HEAP8[debugStringHeap / Int8Array.BYTES_PER_ELEMENT + i]));
     }
     bigDebugString.push(debugStringData.join(""));

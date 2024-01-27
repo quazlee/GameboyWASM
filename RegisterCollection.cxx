@@ -144,12 +144,7 @@ void RegisterCollection::cpA(unsigned_two_byte targetValue)
 void RegisterCollection::addHL(unsigned_four_byte value)
 {
     unsigned_four_byte oldValue = getRegisterDouble(registerID::H, registerID::L);
-    std::cout << formatter4 << value << std::endl;
-    std::cout << formatter4 << oldValue << std::endl;
-
     unsigned_four_byte sum = oldValue + value;
-    std::cout << formatter4 << sum << std::endl;
-
     setRegisterDouble(registerID::H, registerID::L, sum >> 8, sum & 0xFF);
     clearFlag(6);
     assignHalfcarryAddDouble(oldValue, value);

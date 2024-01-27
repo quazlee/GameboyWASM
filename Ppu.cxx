@@ -140,9 +140,6 @@ std::vector<int> Ppu::populateBackgroundWindowMaps()
             if (backgroundDebugAddress == 0x8000)
             {
                 tileNumber = memory->readMemory(tilemapDebugAddress + (x) + (y * 32));
-                if(tileNumber != 0 && tileNumber != 32){
-                    std::cout << tileNumber << std::endl;
-                }
             }
             else
             {
@@ -156,9 +153,6 @@ std::vector<int> Ppu::populateBackgroundWindowMaps()
             std::vector<int> decodedTile = decodeTile(tileSet);
             for (int i = 0; i < 64; i++)
             {
-                if(decodedTile[i] != 0){
-                    std::cout << decodedTile[i] << std::endl;
-                }
                 output.push_back(decodedTile[i]);
             }
         }
