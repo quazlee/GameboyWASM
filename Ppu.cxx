@@ -4,10 +4,8 @@
 #include <iostream>
 #include <algorithm>
 
-
 Ppu::Ppu()
 {
-
 }
 
 Ppu::~Ppu()
@@ -26,7 +24,6 @@ void Ppu::setIsFrameReady(bool isReady)
 
 void Ppu::cycle()
 {
-    mode = 1;
     if (mode == 2)
     {
         modeTwo();
@@ -78,10 +75,110 @@ void Ppu::modeOne()
 
 void Ppu::modeTwo()
 {
+    const unsigned_four_byte ioStart = 0xFF00;
+    // Check if the current scanline is where the top of the window layer is.
+    if (currenScanlineTicks == 0)
+    {
+        unsigned_two_byte ly = memory->readMemory(ioStart + 0x44);
+        unsigned_two_byte wy = memory->readMemory(ioStart + 0x4A);
+        if (wy == ly)
+        {
+            bool hasWyEqualedLy = true;
+        }
+    }
+    oamScan();
+    currenScanlineTicks += 2;
+    if (currenScanlineTicks == 80)
+    {
+        int fetcherXPos = 0;
+        mode = 3;
+        int backgroundPixelsRendered = 0;
+    }
 }
 
 void Ppu::modeThree()
 {
+    const unsigned_four_byte ioStart = 0xFF00;
+
+    // Check if the window should be displayed instead of the background for the rest of the scanline
+    if ((!renderWindow &&
+         (lcdc & 0x20) >> 5) == 1 && // LCDC window Enabled Bit
+        wy == memory->readMemory(ioStart + 0x44) &&
+        backgroundPixelsRendered >= (wx - 7))
+    {
+        renderWindow = true;
+        backgroundFetchStep = 1;
+        backgroundFifo.empty();
+    }
+
+    switch (backgroundFetchStep)
+    {
+    // Get Tile
+    case 1:
+    {
+        unsigned_two_byte scy = memory->readMemory(ioStart + 0x42); // display screen top left Y coordinate
+        unsigned_two_byte scx = memory->readMemory(ioStart + 0x43); // display screen top left X coordinate
+
+        unsigned_two_byte wy = memory->readMemory(ioStart + 0x4A); // Window top left Y coordinate
+        unsigned_two_byte wx = memory->readMemory(ioStart + 0x4B); // Window top left X coordinate
+
+        unsigned_two_byte lcdc = memory->readMemory(ioStart + 0x40); // LCD Control
+
+        unsigned_four_byte tileMapAddress = 0x9800;
+
+        if ((((lcdc & 0x4) >> 3) == 1 && viewportX < wx - 7) || (((lcdc & 0x40) >> 4) == 1 && viewportX >= wx - 7))
+        {
+            tileMapAddress = 0x9C00;
+        }
+
+        backgroundFetchStep = 2;
+        break;
+    }
+    // Get Tile Data Low
+    case 2:
+        backgroundFetchStep = 3;
+        break;
+    // Get Tile Data High
+    case 3:
+        backgroundFetchStep = 4;
+        break;
+    case 4:
+        backgroundFetchStep = 1;
+        break;
+    }
+
+    // Sleep
+    // Push
+}
+
+void Ppu::oamScan()
+{
+    const unsigned_four_byte ioStart = 0xFF00;
+    unsigned_two_byte ly = memory->readMemory(0xFF44);
+    unsigned_two_byte spriteX = memory->readMemory(currentOamAddress + 1);
+    unsigned_two_byte spriteY = memory->readMemory(currentOamAddress);
+    if ((spriteX > 0) && (ly + 16 >= spriteY) && (ly + 16 < spriteY + getSpriteHeight()) && (oamBuffer.size() < 10))
+    {
+        oamBuffer.push_back(Sprite(spriteY,
+                                   spriteX,
+                                   memory->readMemory(currentOamAddress + 2),
+                                   memory->readMemory(currentOamAddress + 3),
+                                   currentOamAddress));
+    }
+    currentOamAddress += 4;
+}
+
+int Ppu::getSpriteHeight()
+{
+    int spriteSize = ((memory->readMemory(0xFF00 + 0x40) & 0x4) >> 2);
+    if (spriteSize == 1)
+    {
+        return 16;
+    }
+    else
+    {
+        return 8;
+    }
 }
 
 int Ppu::getTileMapIndex(int *tilemap, int x, int y)
@@ -181,7 +278,6 @@ std::vector<int> Ppu::populateTileMap()
             {
                 output.push_back(decodedTile[i]);
             }
-            
         }
     }
     std::reverse(output.begin(), output.end());

@@ -1,9 +1,27 @@
 #pragma once
 #include "Types.hxx"
 #include <vector>
+#include <queue>
 // #include "canvas.h"
 
 class Memory;
+
+struct Sprite
+{
+    Sprite(int yPos, int xPos, int tileIndex, int attributes, int oamAddress)
+    {
+        this->yPos = yPos;
+        this->xPos = xPos;
+        this->tileIndex = tileIndex;
+        this->attributes = attributes;
+        this->oamAddress = oamAddress;
+    };
+    int yPos;
+    int xPos;
+    int tileIndex;
+    int attributes;
+    int oamAddress;
+};
 class Ppu
 {
 private:
@@ -15,11 +33,23 @@ private:
     int currentScanline;
     int currenScanlineTicks;
 
+    int currentOamAddress = 0;
+    std::vector<Sprite> oamBuffer;
+
+    unsigned_two_byte* viewport = new unsigned_two_byte[160*144];
+    int viewportX = 0;
+    int viewportY = 0;
+
+    bool renderWindow = false;
+    
+    int backgroundFetchStep = 1;
+
+    std::queue<unsigned_two_byte> backgroundFifo;
+    std::queue<unsigned_two_byte> oamFifo;
+
     unsigned_four_byte backgroundDebugAddress = 0x8000;
     unsigned_four_byte tilemapDebugAddress = 0x9800;
 
-    // HTMLCanvasElement *tileMapCanvas = createCanvas("tile-map-canvas");
-    // CanvasRenderingContext2D *tileMapCanvasctx = tileMapCanvas->getContext(tileMapCanvas, "2d");
 
 public:
     Ppu(/* args */);
@@ -37,6 +67,9 @@ public:
     void modeOne();
     void modeTwo();
     void modeThree();
+
+    void oamScan();
+    int getSpriteHeight();
 
     int getTileMapIndex(int *tilemap, int x, int y);
     void setTileMapIndex(int *tilemap, int x, int y, int value);
