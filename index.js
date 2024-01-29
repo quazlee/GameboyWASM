@@ -53,8 +53,8 @@ function gameboyMainLoop() {
     //     downloadDebugString([bigDebugString.join("")]);
     // }
 
-    backgroundMapDrawer();
-    tileMapDrawer();
+    // backgroundMapDrawer();
+    // tileMapDrawer();
 
 
     // console.log(arrayData);

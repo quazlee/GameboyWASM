@@ -123,6 +123,8 @@ std::vector<int> Ppu::decodeTile(std::vector<unsigned_two_byte> input)
     return generatedTile;
 }
 
+/*-----------------------------------------------------------------------------------------------*/
+
 void Ppu::setDebugAddresses(unsigned_four_byte background, unsigned_four_byte tilemap)
 {
     backgroundDebugAddress = background;
