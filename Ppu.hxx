@@ -39,6 +39,7 @@ private:
     unsigned_two_byte* viewport = new unsigned_two_byte[160*144];
     int viewportX = 0;
     int viewportY = 0;
+    int pixelsPushed = 0;
 
     bool renderWindow = false;
     

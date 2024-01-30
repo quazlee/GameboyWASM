@@ -101,10 +101,10 @@ void Ppu::modeThree()
     const unsigned_four_byte ioStart = 0xFF00;
 
     // Check if the window should be displayed instead of the background for the rest of the scanline
-    if ((!renderWindow &&
-         (lcdc & 0x20) >> 5) == 1 && // LCDC window Enabled Bit
-        wy == memory->readMemory(ioStart + 0x44) &&
-        backgroundPixelsRendered >= (wx - 7))
+    if (!renderWindow &&
+        (memory->readMemory(ioStart + 0x40) & 0x20) >> 5 == 1 &&                    // LCDC window Enabled Bit
+        memory->readMemory(ioStart + 0x4A) == memory->readMemory(ioStart + 0x44) && // curruent scanline is
+        pixelsPushed >= (memory->readMemory(ioStart + 0x4B) - 7))
     {
         renderWindow = true;
         backgroundFetchStep = 1;
