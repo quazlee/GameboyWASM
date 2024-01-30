@@ -1201,7 +1201,21 @@ function dbg(text) {
       return info.get_exception_ptr();
     };
 
+  
   var exceptionLast = 0;
+  
+  
+  var ___cxa_end_catch = () => {
+      // Clear state flag.
+      _setThrew(0, 0);
+      assert(exceptionCaught.length > 0);
+      // Call destructor if one is registered then clear it.
+      var info = exceptionCaught.pop();
+  
+      ___cxa_decrement_exception_refcount(info.excPtr);
+      exceptionLast = 0; // XXX in decRef?
+    };
+
   
   /** @constructor */
   function ExceptionInfo(excPtr) {
@@ -3509,6 +3523,8 @@ var wasmImports = {
   /** @export */
   __cxa_begin_catch: ___cxa_begin_catch,
   /** @export */
+  __cxa_end_catch: ___cxa_end_catch,
+  /** @export */
   __cxa_find_matching_catch_2: ___cxa_find_matching_catch_2,
   /** @export */
   __cxa_find_matching_catch_3: ___cxa_find_matching_catch_3,
@@ -3673,10 +3689,10 @@ function invoke_v(index) {
   }
 }
 
-function invoke_viiii(index,a1,a2,a3,a4) {
+function invoke_iiiii(index,a1,a2,a3,a4) {
   var sp = stackSave();
   try {
-    getWasmTableEntry(index)(a1,a2,a3,a4);
+    return getWasmTableEntry(index)(a1,a2,a3,a4);
   } catch(e) {
     stackRestore(sp);
     if (!(e instanceof EmscriptenEH)) throw e;
@@ -3684,10 +3700,10 @@ function invoke_viiii(index,a1,a2,a3,a4) {
   }
 }
 
-function invoke_iiiii(index,a1,a2,a3,a4) {
+function invoke_viiii(index,a1,a2,a3,a4) {
   var sp = stackSave();
   try {
-    return getWasmTableEntry(index)(a1,a2,a3,a4);
+    getWasmTableEntry(index)(a1,a2,a3,a4);
   } catch(e) {
     stackRestore(sp);
     if (!(e instanceof EmscriptenEH)) throw e;

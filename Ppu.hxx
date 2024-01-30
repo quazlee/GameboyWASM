@@ -36,14 +36,17 @@ private:
     int currentOamAddress = 0;
     std::vector<Sprite> oamBuffer;
 
-    unsigned_two_byte* viewport = new unsigned_two_byte[160*144];
-    int viewportX = 0;
-    int viewportY = 0;
-    int pixelsPushed = 0;
+    // unsigned_two_byte* viewport = new unsigned_two_byte[160*144];
+    std::vector<unsigned_two_byte> viewport;
+    int viewportXTile = 0; //x tile offset in relation to scx.
+    int viewportYTile = 0; //y tile offset in relation to scy.
+    int pixelsPushed = 0; //Number of pixels pushed to the viewport
 
     bool renderWindow = false;
     
     int backgroundFetchStep = 1;
+    unsigned_four_byte tileFetchAddress;
+    unsigned_two_byte tileFetchLow, tileFetchHigh;
 
     std::queue<unsigned_two_byte> backgroundFifo;
     std::queue<unsigned_two_byte> oamFifo;
@@ -71,6 +74,8 @@ public:
 
     void oamScan();
     int getSpriteHeight();
+
+    std::queue<unsigned_two_byte> decodeTileFetchData(unsigned_two_byte dataLow, unsigned_two_byte dataHigh, unsigned_two_byte colorPalette);
 
     int getTileMapIndex(int *tilemap, int x, int y);
     void setTileMapIndex(int *tilemap, int x, int y, int value);

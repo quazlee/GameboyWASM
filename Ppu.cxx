@@ -75,17 +75,6 @@ void Ppu::modeOne()
 
 void Ppu::modeTwo()
 {
-    const unsigned_four_byte ioStart = 0xFF00;
-    // Check if the current scanline is where the top of the window layer is.
-    if (currenScanlineTicks == 0)
-    {
-        unsigned_two_byte ly = memory->readMemory(ioStart + 0x44);
-        unsigned_two_byte wy = memory->readMemory(ioStart + 0x4A);
-        if (wy == ly)
-        {
-            bool hasWyEqualedLy = true;
-        }
-    }
     oamScan();
     currenScanlineTicks += 2;
     if (currenScanlineTicks == 80)
@@ -93,6 +82,8 @@ void Ppu::modeTwo()
         int fetcherXPos = 0;
         mode = 3;
         int backgroundPixelsRendered = 0;
+        backgroundFifo = {};
+        oamFifo = {};
     }
 }
 
@@ -108,7 +99,7 @@ void Ppu::modeThree()
     {
         renderWindow = true;
         backgroundFetchStep = 1;
-        backgroundFifo.empty();
+        backgroundFifo = {};
     }
 
     switch (backgroundFetchStep)
@@ -124,11 +115,28 @@ void Ppu::modeThree()
 
         unsigned_two_byte lcdc = memory->readMemory(ioStart + 0x40); // LCD Control
 
+        // Check which tile map you should use
         unsigned_four_byte tileMapAddress = 0x9800;
-
         if ((((lcdc & 0x4) >> 3) == 1 && viewportX < wx - 7) || (((lcdc & 0x40) >> 4) == 1 && viewportX >= wx - 7))
         {
             tileMapAddress = 0x9C00;
+        }
+
+        // Check which region of memory should be used for tile data
+        unsigned_four_byte tileDataBase = 0x9000;
+        if ((lcdc & 0x16) >> 4)
+        {
+            tileDataBase = 0x8000;
+        }
+
+        int xOffset, yOffset, tileNumber;
+        if (!renderWindow) // background
+        {
+            xOffset = ((scx / 8) + (this.backgroundFetchXPos)) & 0x1F;
+            yOffset = ((scy + ly) & 0xFF);
+        }
+        else // window
+        {
         }
 
         backgroundFetchStep = 2;
@@ -136,18 +144,43 @@ void Ppu::modeThree()
     }
     // Get Tile Data Low
     case 2:
+        tileFetchLow = memory->readMemory(tileFetchAddress);
         backgroundFetchStep = 3;
         break;
     // Get Tile Data High
     case 3:
+        tileFetchHigh = memory->readMemory(tileFetchAddress + 1);
         backgroundFetchStep = 4;
         break;
+    // Sleep
     case 4:
-        backgroundFetchStep = 1;
+        backgroundFetchStep = 5;
+        break;
+    // Push
+    case 5:
+        if (backgroundFifo.empty() && pixelsPushed < 160)
+        {
+            backgroundFifo = decodeTileFetchData(tileFetchLow, tileFetchHigh, memory->readMemory(0xFF47));
+
+            if (pixelsPushed == 0) // Account for subtile scrolling by discarding pixels from the first tile that are not in the viewport.
+            {
+                unsigned_two_byte scx = this.memoryController.memory.io.getData(0x43);
+                for (int i = 0; i < scx % 8; i++)
+                {
+                    backgroundFifo.pop();
+                }
+            }
+            backgroundFetchStep = 1;
+            viewportXTile++; //increment viewport x tile offset. 
+        }
+        if (pixelsPushed == 160)
+        {
+            this.mode = 0;
+        }
+
         break;
     }
 
-    // Sleep
     // Push
 }
 
@@ -179,6 +212,19 @@ int Ppu::getSpriteHeight()
     {
         return 8;
     }
+}
+
+std::queue<unsigned_two_byte> Ppu::decodeTileFetchData(unsigned_two_byte dataLow, unsigned_two_byte dataHigh, unsigned_two_byte colorPalette)
+{
+    std::queue<unsigned_two_byte> generatedTile;
+
+    for (int i = 0; i < 8; i++)
+    {
+        unsigned_two_byte low = (dataHigh & (1 << (7 - i))) >> (7 - i);
+        unsigned_two_byte high = (dataLow & (1 << (7 - i))) >> (7 - i);
+        generatedTile.push((colorPalette >> 2 * ((high << 1) | low)) & 3);
+    }
+    return generatedTile;
 }
 
 int Ppu::getTileMapIndex(int *tilemap, int x, int y)
