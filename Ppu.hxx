@@ -37,7 +37,7 @@ private:
     std::vector<Sprite> oamBuffer;
 
     // unsigned_two_byte* viewport = new unsigned_two_byte[160*144];
-    std::vector<unsigned_two_byte> viewport;
+    std::vector<int> viewport;
     int viewportXTile = 0; //x tile offset in relation to scx.
     int viewportYTile = 0; //y tile offset in relation to scy.
     int pixelsPushed = 0; //Number of pixels pushed to the viewport
@@ -47,6 +47,10 @@ private:
     int backgroundFetchStep = 1;
     unsigned_four_byte tileFetchAddress;
     unsigned_two_byte tileFetchLow, tileFetchHigh;
+
+    int oamFetchStep = 1;
+    unsigned_four_byte spriteFetchAddress;
+    unsigned_two_byte spriteFetchLow, spriteFetchHigh;
 
     std::queue<unsigned_two_byte> backgroundFifo;
     std::queue<unsigned_two_byte> oamFifo;
@@ -86,4 +90,6 @@ public:
     std::vector<int> decodeTile(std::vector<unsigned_two_byte> input);
 
     void setDebugAddresses(unsigned_four_byte background, unsigned_four_byte tilemap);
+
+    std::vector<int> getViewPort();
 };

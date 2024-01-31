@@ -50,6 +50,14 @@ void Gameboy::mainLoop()
     ppu->setIsFrameReady(false);
 }
 
+uintptr_t Gameboy::getViewPort()
+{
+    delete[] viewport;
+    viewport = new int[160*144];
+    std::vector<int> = ppu->getViewPort();
+    return uintptr_t();
+}
+
 uintptr_t Gameboy::getBackground()
 {
     delete[] debugBackgroundMap;

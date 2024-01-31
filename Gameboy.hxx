@@ -15,6 +15,7 @@ private:
     Ppu *ppu = new Ppu();
     Memory *memory = new Memory();
 
+    int *viewport = new int[160 * 144];
     char *debugStringFull = new char[0];
     int debugStringLength = 0;
     int *debugBackgroundMap = new int[65536];
@@ -27,6 +28,8 @@ public:
     void readRom(uintptr_t arrayBuffer, int size);
     void initialize();
     void mainLoop();
+
+    uintptr_t getViewPort();
 
     uintptr_t getBackground();
     uintptr_t getTileMap();
@@ -45,6 +48,7 @@ EMSCRIPTEN_BINDINGS(gameboy)
         .function("readRom", &Gameboy::readRom)
         .function("initialize", &Gameboy::initialize)
         .function("mainLoop", &Gameboy::mainLoop)
+        .function("getViewPort", &Gameboy::getViewPort)
         .function("getBackground", &Gameboy::getBackground)
         .function("getTileMap", &Gameboy::getTileMap)
         .function("setBackgroundSettings", &Gameboy::setBackgroundSettings)
