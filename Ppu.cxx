@@ -188,7 +188,34 @@ void Ppu::modeThree()
         break;
     }
 
-    // Push
+    if (oamBuffer.empty())
+    {
+        unsigned_two_byte ly = memory->readMemory(0xFF44);
+    }
+
+    switch (oamFetchStep)
+    {
+    case 1:
+        unsigned_two_byte ly = memory->readMemory(0xFF44);
+        unsigned_four_byte address = 0x8000 + (16 * this.currentOamTile.tileIndex);
+        spriteFetchAddress = address + (2 * (ly - (this.currentOamTile.yPos - 16)));
+        oamFetchStep = 2;
+        break;
+    case 2:
+        spriteFetchLow = memory->readMemory(spriteFetchAddress);
+        oamFetchStep = 3;
+        break;
+    case 3:
+        spriteFetchHigh = memory->readMemory(spriteFetchAddress + 1);
+        oamFetchStep = 4;
+        break;
+    case 4:
+        oamFetchStep = 5;
+        break;
+    case 5:
+        oamFetchStep = 1;
+        break;
+    }
 }
 
 void Ppu::oamScan()
@@ -279,6 +306,11 @@ void Ppu::setDebugAddresses(unsigned_four_byte background, unsigned_four_byte ti
 {
     backgroundDebugAddress = background;
     tilemapDebugAddress = tilemap;
+}
+
+std::vector<int> Ppu::getViewPort()
+{
+    return std::vector<int>();
 }
 
 std::vector<int> Ppu::populateBackgroundWindowMaps()

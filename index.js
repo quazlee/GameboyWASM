@@ -1,5 +1,4 @@
 import { } from "./Gameboy.js"
-import { Debug } from "./debug.js";
 var gameboy;
 // var Module2 = {
 //     onRuntimeInitialized: function () {
@@ -43,12 +42,13 @@ async function startGameboy() {
 let bigDebugString = [];
 function gameboyMainLoop() {
     gameboy.mainLoop();
+    drawViewPort();
 
     // buildDebugString(bigDebugString);
     // if (bigDebugString.length == 10) {
     //     // for (let i = 0; i < 6; i++) {
     //     //     downloadDebugString([bigDebugString[i]]);
-            
+
     //     // }
     //     downloadDebugString([bigDebugString.join("")]);
     // }
@@ -58,6 +58,18 @@ function gameboyMainLoop() {
 
 
     // console.log(arrayData);
+}
+
+var viewportCanvas = document.getElementById("viewport-canvas");
+var viewportCanvasCtx = viewportCanvas.getContext("2d");
+
+function drawViewPort() {
+    let viewPortHeap = gameboy.getViewPort();
+    let viewPortData = [];
+    for (let i = 0; i < 160 * 144; i++) {
+        // viewPortData.push(myModule.HEAP8[viewPortHeap / Uint8Array.BYTES_PER_ELEMENT + i]);
+        drawToCanvas(i % 160, Math.floor(i / 160), colorPalette[myModule.HEAP32[viewPortHeap / Int8Array.BYTES_PER_ELEMENT + i]], viewportCanvasCtx);
+    }
 }
 
 
@@ -86,10 +98,6 @@ window.addEventListener("keydown", function (e) {
         e.preventDefault();
     }
 }, false);
-
-// -------------------
-
-var debug = new Debug();
 
 // -------------------
 var backgroundCanvasTileMapSource = document.getElementById("background-canvas-tile-map-source");
