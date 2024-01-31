@@ -114,6 +114,7 @@ void Ppu::modeThree()
         unsigned_two_byte wx = memory->readMemory(ioStart + 0x4B); // Window top left X coordinate
 
         unsigned_two_byte lcdc = memory->readMemory(ioStart + 0x40); // LCD Control
+        unsigned_two_byte ly = memory->readMemory(ioStart + 0x44);
 
         // Check which tile map you should use
         unsigned_four_byte tileMapAddress = 0x9800;
@@ -129,15 +130,22 @@ void Ppu::modeThree()
             tileDataBase = 0x8000;
         }
 
-        int xOffset, yOffset, tileNumber;
+        int xOffset, yOffset;
+        unsigned_two_byte tileNumber;
+        unsigned_four_byte tileAddressBase;
         if (!renderWindow) // background
         {
-            xOffset = ((scx / 8) + (this.backgroundFetchXPos)) & 0x1F;
+            xOffset = ((scx / 8) + (viewportXTile)) & 0x1F;
             yOffset = ((scy + ly) & 0xFF);
         }
         else // window
         {
+            xOffset = (pixelsPushed - static_cast<int>(wx)) / 8;
+            yOffset = (static_cast<int>(ly) - static_cast<int>(wy)) / 8;
         }
+        tileNumber = memory->readMemory(tileDataBase + xOffset + (32 * (yOffset / 8)));
+        tileAddressBase = tileMapAddress + 16 * (tileDataBase == 0x8000 ? this.tileNumber : static_cast<signed_two_byte>(tileNumber));
+        tileFetchAddress = tileAddressBase + (2 * (yOffset % 8));
 
         backgroundFetchStep = 2;
         break;
@@ -171,13 +179,12 @@ void Ppu::modeThree()
                 }
             }
             backgroundFetchStep = 1;
-            viewportXTile++; //increment viewport x tile offset. 
+            viewportXTile++; // increment viewport x tile offset.
         }
         if (pixelsPushed == 160)
         {
             this.mode = 0;
         }
-
         break;
     }
 
