@@ -54,8 +54,9 @@ uintptr_t Gameboy::getViewPort()
 {
     delete[] viewport;
     viewport = new int[160*144];
-    std::vector<int> = ppu->getViewPort();
-    return uintptr_t();
+    std::vector<int> data = ppu->getViewPort();
+    std::copy(data.begin(), data.end(), viewport);
+    return uintptr_t(viewport);
 }
 
 uintptr_t Gameboy::getBackground()

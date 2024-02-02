@@ -1,4 +1,6 @@
 import { } from "./Gameboy.js"
+import { Debug } from "./debug.js";
+var debug = new Debug();
 var gameboy;
 // var Module2 = {
 //     onRuntimeInitialized: function () {
@@ -53,7 +55,7 @@ function gameboyMainLoop() {
     //     downloadDebugString([bigDebugString.join("")]);
     // }
 
-    // backgroundMapDrawer();
+    backgroundMapDrawer();
     // tileMapDrawer();
 
 

@@ -31,7 +31,7 @@ private:
     int mode;
 
     int currentScanline;
-    int currenScanlineTicks;
+    int currentScanlineTicks;
 
     int currentOamAddress = 0;
     std::vector<Sprite> oamBuffer;

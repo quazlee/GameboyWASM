@@ -1,6 +1,7 @@
 #include "Ppu.hxx"
 #include "Memory.hxx"
 #include <vector>
+#include <queue>
 #include <iostream>
 #include <algorithm>
 
@@ -49,6 +50,32 @@ void Ppu::setMemory(Memory *value)
 
 void Ppu::modeZero()
 {
+    currentScanlineTicks++;
+    if (currentScanlineTicks == 456 && memory->readMemory(0xFF44) < 143)
+    {
+        mode = 2;
+        currentScanlineTicks = 0;
+        memory->writeMemory(0xFF44, memory->readMemory(0xFF44) + 1);
+        currentOamAddress = 0xFE00;
+        oamFifo = {};
+        backgroundFifo = {};
+        backgroundFetchStep = 1;
+        pixelsPushed = 0;
+        viewportXTile = 0;
+    }
+    else if (currentScanlineTicks == 456 && memory->readMemory(0xFF44) == 143)
+    {
+        mode = 1;
+        currentScanlineTicks = 0;
+        memory->writeMemory(0xFF44, memory->readMemory(0xFF44) + 1);
+        memory->writeMemory(0xFF0F, memory->readMemory(0xFF0F) | 1);
+        currentOamAddress = 0xFE00;
+        oamFifo = {};
+        backgroundFifo = {};
+        backgroundFetchStep = 1;
+        pixelsPushed = 0;
+        viewportXTile = 0;
+    }
 }
 
 // Vblank Period. Scanlines 144-153
@@ -56,15 +83,15 @@ void Ppu::modeOne()
 {
     const unsigned_four_byte ioStart = 0xFF00;
 
-    currenScanlineTicks += 2;
-    if (currenScanlineTicks == 456 && memory->readMemory(ioStart + 0x44) < 153)
+    currentScanlineTicks += 2;
+    if (currentScanlineTicks == 456 && memory->readMemory(ioStart + 0x44) < 153)
     {
-        currenScanlineTicks = 0;
+        currentScanlineTicks = 0;
         memory->writeMemory(ioStart + 0x44, memory->readMemory(ioStart + 0x44) + 1);
     }
-    else if (currenScanlineTicks == 456 && memory->readMemory(ioStart + 0x44) == 153)
+    else if (currentScanlineTicks == 456 && memory->readMemory(ioStart + 0x44) == 153)
     {
-        currenScanlineTicks = 0;
+        currentScanlineTicks = 0;
         mode = 2;
         memory->writeMemory(ioStart + 0x44, 0);
         setIsFrameReady(true);
@@ -76,8 +103,8 @@ void Ppu::modeOne()
 void Ppu::modeTwo()
 {
     oamScan();
-    currenScanlineTicks += 2;
-    if (currenScanlineTicks == 80)
+    currentScanlineTicks += 2;
+    if (currentScanlineTicks == 80)
     {
         int fetcherXPos = 0;
         mode = 3;
@@ -102,6 +129,7 @@ void Ppu::modeThree()
         backgroundFifo = {};
     }
 
+    int ticksPassed;
     switch (backgroundFetchStep)
     {
     // Get Tile
@@ -118,7 +146,7 @@ void Ppu::modeThree()
 
         // Check which tile map you should use
         unsigned_four_byte tileMapAddress = 0x9800;
-        if ((((lcdc & 0x4) >> 3) == 1 && viewportX < wx - 7) || (((lcdc & 0x40) >> 4) == 1 && viewportX >= wx - 7))
+        if ((((lcdc & 0x4) >> 3) == 1 && viewportXTile < wx - 7) || (((lcdc & 0x40) >> 4) == 1 && viewportXTile >= wx - 7))
         {
             tileMapAddress = 0x9C00;
         }
@@ -143,36 +171,52 @@ void Ppu::modeThree()
             xOffset = (pixelsPushed - static_cast<int>(wx)) / 8;
             yOffset = (static_cast<int>(ly) - static_cast<int>(wy)) / 8;
         }
-        tileNumber = memory->readMemory(tileDataBase + xOffset + (32 * (yOffset / 8)));
-        tileAddressBase = tileMapAddress + 16 * (tileDataBase == 0x8000 ? this.tileNumber : static_cast<signed_two_byte>(tileNumber));
+        tileNumber = memory->readMemory(tileMapAddress + xOffset + (32 * (yOffset / 8)));
+        tileAddressBase = tileDataBase + 16 * (tileDataBase == 0x8000 ? tileNumber : static_cast<signed_two_byte>(tileNumber));
         tileFetchAddress = tileAddressBase + (2 * (yOffset % 8));
 
+        if (tileNumber != 32)
+        {
+            std::cout << formatter2 << static_cast<int>(tileNumber) << std::endl;
+        }
+
         backgroundFetchStep = 2;
+        ticksPassed = 2;
         break;
     }
     // Get Tile Data Low
     case 2:
+    {
         tileFetchLow = memory->readMemory(tileFetchAddress);
         backgroundFetchStep = 3;
+        ticksPassed = 2;
         break;
+    }
     // Get Tile Data High
     case 3:
+    {
         tileFetchHigh = memory->readMemory(tileFetchAddress + 1);
         backgroundFetchStep = 4;
+        ticksPassed = 2;
         break;
+    }
     // Sleep
     case 4:
+    {
         backgroundFetchStep = 5;
+        ticksPassed = 2;
         break;
+    }
     // Push
     case 5:
+    {
         if (backgroundFifo.empty() && pixelsPushed < 160)
         {
             backgroundFifo = decodeTileFetchData(tileFetchLow, tileFetchHigh, memory->readMemory(0xFF47));
 
             if (pixelsPushed == 0) // Account for subtile scrolling by discarding pixels from the first tile that are not in the viewport.
             {
-                unsigned_two_byte scx = this.memoryController.memory.io.getData(0x43);
+                unsigned_two_byte scx = memory->readMemory(0xFF43);
                 for (int i = 0; i < scx % 8; i++)
                 {
                     backgroundFifo.pop();
@@ -183,39 +227,69 @@ void Ppu::modeThree()
         }
         if (pixelsPushed == 160)
         {
-            this.mode = 0;
+            mode = 0;
         }
+        ticksPassed = 1;
         break;
+    }
     }
 
     if (oamBuffer.empty())
     {
         unsigned_two_byte ly = memory->readMemory(0xFF44);
     }
-
-    switch (oamFetchStep)
+    bool fetchSprite = false;
+    if (fetchSprite)
     {
-    case 1:
-        unsigned_two_byte ly = memory->readMemory(0xFF44);
-        unsigned_four_byte address = 0x8000 + (16 * this.currentOamTile.tileIndex);
-        spriteFetchAddress = address + (2 * (ly - (this.currentOamTile.yPos - 16)));
-        oamFetchStep = 2;
-        break;
-    case 2:
-        spriteFetchLow = memory->readMemory(spriteFetchAddress);
-        oamFetchStep = 3;
-        break;
-    case 3:
-        spriteFetchHigh = memory->readMemory(spriteFetchAddress + 1);
-        oamFetchStep = 4;
-        break;
-    case 4:
-        oamFetchStep = 5;
-        break;
-    case 5:
-        oamFetchStep = 1;
-        break;
+        switch (oamFetchStep)
+        {
+        case 1:
+        {
+            unsigned_two_byte ly = memory->readMemory(0xFF44);
+            // unsigned_four_byte address = 0x8000 + (16 * this.currentOamTile.tileIndex);
+            // spriteFetchAddress = address + (2 * (ly - (this.currentOamTile.yPos - 16)));
+            oamFetchStep = 2;
+            break;
+        }
+        case 2:
+        {
+            spriteFetchLow = memory->readMemory(spriteFetchAddress);
+            oamFetchStep = 3;
+            break;
+        }
+        case 3:
+        {
+            spriteFetchHigh = memory->readMemory(spriteFetchAddress + 1);
+            oamFetchStep = 4;
+            break;
+        }
+        case 4:
+        {
+            oamFetchStep = 5;
+            break;
+        }
+        case 5:
+        {
+            oamFetchStep = 1;
+            break;
+        }
+        }
     }
+
+    // Push to viewport
+    // push background no sprite
+
+    for (int i = 0; i < ticksPassed; i++)
+    {
+        if (!backgroundFifo.empty())
+        {
+            viewport.push_back(backgroundFifo.front());
+            backgroundFifo.pop();
+            pixelsPushed++;
+        }
+        // std::cout << backgroundFifo.size() << std::endl;
+    }
+    currentScanlineTicks += ticksPassed;
 }
 
 void Ppu::oamScan()
