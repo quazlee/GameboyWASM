@@ -56,7 +56,7 @@ function gameboyMainLoop() {
     // }
 
     backgroundMapDrawer();
-    // tileMapDrawer();
+    tileMapDrawer();
 
 
     // console.log(arrayData);
@@ -69,8 +69,8 @@ function drawViewPort() {
     let viewPortHeap = gameboy.getViewPort();
     let viewPortData = [];
     for (let i = 0; i < 160 * 144; i++) {
-        // viewPortData.push(myModule.HEAP8[viewPortHeap / Uint8Array.BYTES_PER_ELEMENT + i]);
-        drawToCanvas(i % 160, Math.floor(i / 160), colorPalette[myModule.HEAP32[viewPortHeap / Int8Array.BYTES_PER_ELEMENT + i]], viewportCanvasCtx);
+        viewPortData.push(myModule.HEAP32[viewPortHeap / Int32Array.BYTES_PER_ELEMENT + i]);
+        drawToCanvas(i % 160, Math.floor(i / 160), colorPalette[myModule.HEAP32[viewPortHeap / Int32Array.BYTES_PER_ELEMENT + i]], viewportCanvasCtx);
     }
 }
 

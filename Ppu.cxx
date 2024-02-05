@@ -75,6 +75,7 @@ void Ppu::modeZero()
         backgroundFetchStep = 1;
         pixelsPushed = 0;
         viewportXTile = 0;
+        viewport = {};
     }
 }
 
@@ -172,13 +173,14 @@ void Ppu::modeThree()
             yOffset = (static_cast<int>(ly) - static_cast<int>(wy)) / 8;
         }
         tileNumber = memory->readMemory(tileMapAddress + xOffset + (32 * (yOffset / 8)));
+        std::cout << formatter2 << static_cast<int>(tileNumber) << std::endl;
         tileAddressBase = tileDataBase + 16 * (tileDataBase == 0x8000 ? tileNumber : static_cast<signed_two_byte>(tileNumber));
         tileFetchAddress = tileAddressBase + (2 * (yOffset % 8));
 
-        if (tileNumber != 32)
-        {
-            std::cout << formatter2 << static_cast<int>(tileNumber) << std::endl;
-        }
+        // if (tileNumber != 32)
+        // {
+        //     std::cout << formatter2 << static_cast<int>(tileNumber) << std::endl;
+        // }
 
         backgroundFetchStep = 2;
         ticksPassed = 2;
@@ -283,7 +285,8 @@ void Ppu::modeThree()
     {
         if (!backgroundFifo.empty())
         {
-            viewport.push_back(backgroundFifo.front());
+            viewport.push_back(static_cast<int>(backgroundFifo.front()));
+            // std::cout << static_cast<int>(backgroundFifo.front()) << std::endl;
             backgroundFifo.pop();
             pixelsPushed++;
         }

@@ -33,6 +33,8 @@ void Gameboy::initialize()
     cpu->setPpu(ppu);
 
     ppu->setMemory(memory);
+
+    memory->setCpu(cpu);
 }
 
 void Gameboy::mainLoop()

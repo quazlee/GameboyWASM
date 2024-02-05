@@ -315,3 +315,8 @@ void Memory::writeMemoryMbcOne(unsigned_four_byte address, unsigned_two_byte val
         ie->setData(0, 0, value);
     }
 }
+
+void Memory::setCpu(Cpu *input)
+{
+    cpu = input;
+}
